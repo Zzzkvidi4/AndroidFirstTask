@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TestAndroidApplication1</string>
     <integer name="com_vk_sdk_AppId">6229699</integer>
+
+    <string name="title_activity_second">SecondActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_login">Login</string>
 </resources>

@@ -1,78 +1,42 @@
 package zzzkvidi4.com.testandroidapplication1;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.os.Message;
-import android.provider.Settings;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
-
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
+    private SharedPreferences preferences;
     private TextView infoTextView;
-    private TextView resultMsg;
+    private ListView selectGameListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         infoTextView = (TextView)findViewById(R.id.infoTextView);
-        resultMsg = (TextView)findViewById(R.id.resultMsg);
+        selectGameListView = (ListView)findViewById(R.id.selectGameListView);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"game 1", "game 2", "game 3"});
+        selectGameListView.setAdapter(arrayAdapter);
         if (!VKSdk.isLoggedIn()) {
-            VKSdk.login(this, "friends,photos");
+            Activity loginActivity = new LoginActivity();
+            Intent intent = new Intent(this, loginActivity.getClass());
+            startActivity(intent);
         } else {
             uploadUserInfo();
         }
-
     }
 
     public void uploadUserInfo(){
-        infoTextView.setText("Success!");
-        VKRequest request = new VKRequest("account.getProfileInfo");
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                JSONObject resp = response.json;
-                infoTextView.setText(resp.toString());
-                resultMsg.setText("Success result!");
-            }
-
-            @Override
-            public void onError(VKError error) {
-                resultMsg.setText("Insuccess result!");
-            }
-
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                resultMsg.setText("Something strange");
-            }
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-                infoTextView.clearComposingText();
-                uploadUserInfo();
-            }
-
-            @Override
-            public void onError(VKError error) {
-                infoTextView.clearComposingText();
-                infoTextView.setText("Error!");
-            }
-        }));
+        preferences = getSharedPreferences("user_info", MODE_PRIVATE);
+        String name = preferences.getString("name", "Имя");
+        String surname = preferences.getString("surname", "Фамилия");
+        infoTextView.clearComposingText();
+        infoTextView.setText(name + " " + surname);
     }
 }

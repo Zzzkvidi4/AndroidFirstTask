@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
     package="zzzkvidi4.com.testandroidapplication1">
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
-        android:name="zzzkvidi4.com.testandroidapplication1.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,6 +23,12 @@
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
+        <activity
+            android:name=".SecondActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_second"
+            android:theme="@style/FullscreenTheme" />
+        <activity android:name=".LoginActivity"></activity>
     </application>
 
 </manifest>
