@@ -28,7 +28,9 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_second"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".GameOptionActivity" />
+        <activity android:name=".SpecksGameActivity"></activity>
     </application>
 
 </manifest>
