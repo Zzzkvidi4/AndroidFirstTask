@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 
 import java.lang.reflect.InvocationTargetException;
+
+import static zzzkvidi4.com.testandroidapplication1.MainActivity.LOG_TAG;
 
 public class GameOptionActivity extends AppCompatActivity {
     private long id;
@@ -60,9 +63,15 @@ public class GameOptionActivity extends AppCompatActivity {
                 intent.putExtra("isFirst", false);
                 startActivity(intent);
             }
-            catch(InvocationTargetException e){}
-            catch(InstantiationException e){}
-            catch (IllegalAccessException e){}
+            catch(InvocationTargetException e){
+                Log.d(LOG_TAG, "error in method invoke!");
+            }
+            catch(InstantiationException e){
+                Log.d(LOG_TAG, "error in instantiation!");
+            }
+            catch (IllegalAccessException e){
+                Log.d(LOG_TAG, "error in access to constructor!");
+            }
         }
     }
 }

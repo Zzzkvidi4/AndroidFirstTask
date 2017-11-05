@@ -11,13 +11,14 @@ import java.util.List;
 
 /**
  * Created by Roman on 05.11.2017.
+ * In package ${PACKAGE_NAME}.
  */
 
-public class GameActivityFactory {
+class GameActivityFactory {
     private SparseArray<Constructor<? extends Activity>> constructors;
     private static GameActivityFactory _factory = null;
 
-    public static  GameActivityFactory getInstance(){
+    static  GameActivityFactory getInstance(){
         if (_factory != null){
             return _factory;
         }
@@ -29,13 +30,13 @@ public class GameActivityFactory {
         constructors = new SparseArray<>();
     }
 
-    public void registerConstructor(int key, Class<? extends Activity> clazz) throws NoSuchMethodException {
+    void registerConstructor(int key, Class<? extends Activity> clazz) throws NoSuchMethodException {
         Class[] paramTypes = new Class[] {};
         Constructor<? extends Activity> constructor = clazz.getConstructor(paramTypes);
         constructors.append(key, constructor);
     }
 
-    public Activity createNewActivity(int key) throws InstantiationException, IllegalAccessException, InvocationTargetException{
+    Activity createNewActivity(int key) throws InstantiationException, IllegalAccessException, InvocationTargetException{
         return constructors.get(key).newInstance();
     }
 }

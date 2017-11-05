@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.vk.sdk.VKSdk;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String LOG_TAG = "Custom error: ";
     private SharedPreferences preferences;
     private TextView infoTextView;
     private ListView selectGameListView;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
             gameActivityFactory.registerConstructor(0, SpecksGameActivity.class);
         }
         catch (NoSuchMethodException e){
+            Log.d(LOG_TAG, "error in factory!");
         }
         infoTextView = (TextView)findViewById(R.id.infoTextView);
         selectGameListView = (ListView)findViewById(R.id.selectGameListView);
