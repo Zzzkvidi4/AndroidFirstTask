@@ -8,4 +8,7 @@
     <string name="title_activity_login">Login</string>
     <string name="title_activity_game_option">GameOptionActivity</string>
     <string name="startGameBtnText">Start!</string>
+    <string name="difficultyString">Difficulty</string>
+    <string name="authorizeString">Authorize</string>
+    <string name="log_out_btn_text">Logout</string>
 </resources>

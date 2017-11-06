@@ -1,5 +1,6 @@
 package zzzkvidi4.com.testandroidapplication1;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -20,58 +21,25 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences preferences;
-    Button tryAgainBtn;
+    Button authorizeBtn;
     TextView infoMessageTextView;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        tryAgainBtn = (Button)findViewById(R.id.tryAgainBtn);
-        tryAgainBtn.setOnClickListener(new TryAgainUploadInfoListener());
+        authorizeBtn = (Button)findViewById(R.id.authorizeBtn);
+        authorizeBtn.setOnClickListener(new TryAgainUploadInfoListener());
         infoMessageTextView = (TextView)findViewById(R.id.infoMessageTextView);
-        VKSdk.login(this, "");
-        setupUserInfo();
-        finishActivity(0);
     }
 
-    protected void setupUserInfo(){
-        VKRequest request = new VKRequest("account.getProfileInfo");
+    protected void setupUserInfo(String name, String surname){
         preferences = getSharedPreferences("user_info", MODE_PRIVATE);
-        final SharedPreferences.Editor editor = preferences.edit();
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                JSONObject resp = response.json;
-                String name;
-                String surname;
-                try{
-                    name = resp.getJSONObject("response").getString("first_name");
-                    surname = resp.getJSONObject("response").getString("last_name");
-                }
-                catch (JSONException e){
-                    name = "Имя";
-                    surname = "Фамилия";
-                }
-                editor.putString("name", name);
-                editor.putString("surname", surname);
-                editor.apply();
-            }
-
-            @Override
-            public void onError(VKError error) {
-                infoMessageTextView.append("Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.");
-                infoMessageTextView.setVisibility(View.VISIBLE);
-                tryAgainBtn.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                infoMessageTextView.append("Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.");
-                infoMessageTextView.setVisibility(View.VISIBLE);
-                tryAgainBtn.setVisibility(View.VISIBLE);
-            }
-        });
+        editor = preferences.edit();
+        editor.putString("name", name);
+        editor.putString("surname", surname);
+        editor.apply();
     }
 
     @Override
@@ -79,23 +47,55 @@ public class LoginActivity extends AppCompatActivity {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                //some code to use token and connect to our server
-            }
 
+                VKRequest request = new VKRequest("account.getProfileInfo");
+                request.executeWithListener(new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        JSONObject resp = response.json;
+                        String name;
+                        String surname;
+                        try{
+                            name = resp.getJSONObject("response").getString("first_name");
+                            surname = resp.getJSONObject("response").getString("last_name");
+                        }
+                        catch (JSONException e){
+                            name = "Имя";
+                            surname = "Фамилия";
+                        }
+                        setupUserInfo(name, surname);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finishActivity(0);
+                    }
+
+                    @Override
+                    public void onError(VKError error) {
+                        infoMessageTextView.append("Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.");
+                        infoMessageTextView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                        infoMessageTextView.append("Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.");
+                        infoMessageTextView.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
             @Override
             public void onError(VKError error) {
-                infoMessageTextView.append(error.errorMessage);
-                infoMessageTextView.setVisibility(View.VISIBLE);
-                tryAgainBtn.setVisibility(View.VISIBLE);
+                // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
             }
-        }));
+        })) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private class TryAgainUploadInfoListener implements View.OnClickListener{
 
         @Override
         public void onClick(View view) {
-            setupUserInfo();
+            VKSdk.login(LoginActivity.this, "");
         }
     }
 }

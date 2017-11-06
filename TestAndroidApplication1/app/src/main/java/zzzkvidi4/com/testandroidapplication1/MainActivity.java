@@ -1,15 +1,14 @@
 package zzzkvidi4.com.testandroidapplication1;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.vk.sdk.VKSdk;
@@ -36,11 +35,13 @@ public class MainActivity extends AppCompatActivity {
         selectGameListView = (ListView)findViewById(R.id.selectGameListView);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[] {"Specks"});
         selectGameListView.setAdapter(arrayAdapter);
-        selectGameListView.setOnItemClickListener(new selectGameItemClickListener());
+        selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
+        Button logoutBtn = (Button)findViewById(R.id.logoutBtn);
+        logoutBtn.setOnClickListener(new LogOutOnClickListener());
         if (!VKSdk.isLoggedIn()) {
-            Activity loginActivity = new LoginActivity();
-            Intent intent = new Intent(this, loginActivity.getClass());
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+            finish();
         } else {
             uploadUserInfo();
         }
@@ -63,13 +64,23 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private class selectGameItemClickListener implements AdapterView.OnItemClickListener{
+    private class SelectGameItemClickListener implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            Activity gameOptionsActivity = new GameOptionActivity();
-            Intent intent = new Intent(MainActivity.this, gameOptionsActivity.getClass());
+            Intent intent = new Intent(MainActivity.this, GameOptionActivity.class);
             intent.putExtra("id", l);
             startActivity(intent);
+        }
+    }
+
+    private class LogOutOnClickListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+            VKSdk.logout();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 }

@@ -24,5 +24,7 @@ public class SpecksGameActivity extends AppCompatActivity {
         infoTextView.append("Diff: " + difficulty + "; Score: " + score);
     }
 
-
+    @Override
+    public void onBackPressed() {
+    }
 }
