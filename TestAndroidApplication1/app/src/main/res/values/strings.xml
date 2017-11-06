@@ -11,4 +11,6 @@
     <string name="difficultyString">Difficulty</string>
     <string name="authorizeString">Authorize</string>
     <string name="log_out_btn_text">Logout</string>
+    <string name="authorizeStringRU">Авторизоваться</string>
+    <string name="log_out_btn_text_rus">Выйти</string>
 </resources>

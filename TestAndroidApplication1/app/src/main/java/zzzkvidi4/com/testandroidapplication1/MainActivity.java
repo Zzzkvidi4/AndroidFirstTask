@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         }
         infoTextView = (TextView)findViewById(R.id.infoTextView);
         selectGameListView = (ListView)findViewById(R.id.selectGameListView);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[] {"Specks"});
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Specks", "Fuck", "This", "Shit", "I wanna", "Play", "Games", "Not", "Do", "This"});
         selectGameListView.setAdapter(arrayAdapter);
         selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
         Button logoutBtn = (Button)findViewById(R.id.logoutBtn);
