@@ -3,11 +3,16 @@ package zzzkvidi4.com.testandroidapplication1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -17,6 +22,17 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import zzzkvidi4.com.testandroidapplication1.specks.CardField;
+import zzzkvidi4.com.testandroidapplication1.specks.CardGameObject;
+import zzzkvidi4.com.testandroidapplication1.tools.BitmapTools;
 
 public class SpecksGameActivity extends AppCompatActivity {
     private int difficulty;
@@ -40,8 +56,6 @@ public class SpecksGameActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        FrameLayout game = new FrameLayout(this);
-        SurfaceView gameView = new GameView(this);
         LinearLayout gameWidgets = new LinearLayout(this);
 
         Button pauseBtn = new Button(this);
@@ -49,6 +63,9 @@ public class SpecksGameActivity extends AppCompatActivity {
         pauseBtn.setOnClickListener(new PauseOnClickListener());
 
         gameWidgets.addView(pauseBtn);
+
+        FrameLayout game = new FrameLayout(this);
+        SurfaceView gameView = new GameView(this, 2, 3, gameWidgets.getHeight());
 
         game.addView(gameView);
         game.addView(gameWidgets);
@@ -61,10 +78,16 @@ public class SpecksGameActivity extends AppCompatActivity {
     }
 
     public class GameView extends SurfaceView{
+        private CardField cardField;
         private GameThread gameThread;
+        private int topMargin;
 
-        public GameView(Context context) {
+        public GameView(Context context, int fieldWidth, int fieldHeight, int topMargin) {
             super(context);
+            int canvasWidth = getWidth();
+            int canvasHeight = getHeight();
+            this.topMargin = topMargin;
+            cardField = new CardField(fieldWidth, fieldHeight);
             this.gameThread = new GameThread(this);
             getHolder().addCallback(new SurfaceHolder.Callback()
             {
@@ -113,6 +136,7 @@ public class SpecksGameActivity extends AppCompatActivity {
 
             @Override
             public void run() {
+                cardField.initialize(getWidth(), getHeight(), topMargin, view);
                 while (isRunning)
                 {
                     Canvas canvas = null;
@@ -140,7 +164,16 @@ public class SpecksGameActivity extends AppCompatActivity {
 
         @Override
         protected void onDraw(Canvas canvas) {
-            canvas.drawColor(Color.RED);
+            canvas.drawColor(Color.WHITE);
+            cardField.onDraw(canvas);
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                cardField.checkOnTouch((int) event.getX(), (int) event.getY());
+            }
+            return true;
         }
     }
 
