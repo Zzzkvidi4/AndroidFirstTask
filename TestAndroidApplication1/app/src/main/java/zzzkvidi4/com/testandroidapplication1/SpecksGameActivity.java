@@ -38,8 +38,10 @@ public class SpecksGameActivity extends AppCompatActivity {
     private int difficulty;
     private int score;
     private boolean isFirst;
+    private int id;
 
     private TextView infoTextView;
+    LinearLayout gameWidgets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class SpecksGameActivity extends AppCompatActivity {
         difficulty = intent.getIntExtra("difficulty", -1);
         score = intent.getIntExtra("score", -1);
         isFirst = intent.getBooleanExtra("isFirst", true);
+        id = intent.getIntExtra("id", -1);
         //setContentView(R.layout.activity_specks_game);
         //infoTextView = (TextView)findViewById(R.id.infoTextView);
         //infoTextView.append("Diff: " + difficulty + "; Score: " + score);
@@ -56,7 +59,7 @@ public class SpecksGameActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        LinearLayout gameWidgets = new LinearLayout(this);
+        gameWidgets = new LinearLayout(this);
 
         Button pauseBtn = new Button(this);
         pauseBtn.setText("Pause");
@@ -65,7 +68,7 @@ public class SpecksGameActivity extends AppCompatActivity {
         gameWidgets.addView(pauseBtn);
 
         FrameLayout game = new FrameLayout(this);
-        SurfaceView gameView = new GameView(this, 2, 3, gameWidgets.getHeight());
+        SurfaceView gameView = new GameView(this, 2, 3);
 
         game.addView(gameView);
         game.addView(gameWidgets);
@@ -80,13 +83,9 @@ public class SpecksGameActivity extends AppCompatActivity {
     public class GameView extends SurfaceView{
         private CardField cardField;
         private GameThread gameThread;
-        private int topMargin;
 
-        public GameView(Context context, int fieldWidth, int fieldHeight, int topMargin) {
+        public GameView(Context context, int fieldWidth, int fieldHeight) {
             super(context);
-            int canvasWidth = getWidth();
-            int canvasHeight = getHeight();
-            this.topMargin = topMargin;
             cardField = new CardField(fieldWidth, fieldHeight);
             this.gameThread = new GameThread(this);
             getHolder().addCallback(new SurfaceHolder.Callback()
@@ -126,31 +125,64 @@ public class SpecksGameActivity extends AppCompatActivity {
             private boolean isRunning;
             private GameView view;
 
-            public GameThread(GameView view){
+            GameThread(GameView view){
                 this.view = view;
             }
 
-            public void setRunning(boolean isRunning){
+            void setRunning(boolean isRunning){
                 this.isRunning = isRunning;
             }
 
             @Override
             public void run() {
-                cardField.initialize(getWidth(), getHeight(), topMargin, view);
-                while (isRunning)
+                Canvas canvas = view.getHolder().lockCanvas();
+                draw(canvas);
+                if (canvas != null){
+                    view.getHolder().unlockCanvasAndPost(canvas);
+                }
+                cardField.initialize(getWidth(), getHeight(), 50, view);
+                cardField.setFieldHidden(false);
+                try
                 {
-                    Canvas canvas = null;
+                    // подготовка Canvas-а
+                    canvas = view.getHolder().lockCanvas();
+                    synchronized (view.getHolder())
+                    {
+                        draw(canvas);
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    if (canvas != null)
+                    {
+                        view.getHolder().unlockCanvasAndPost(canvas);
+                    }
+                }
+                try {
+                    Thread.sleep(3000);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                cardField.setFieldHidden(true);
+                while (isRunning && !cardField.gameFinished())
+                {
+                    canvas = null;
                     try
                     {
                         // подготовка Canvas-а
                         canvas = view.getHolder().lockCanvas();
                         synchronized (view.getHolder())
                         {
-                            //draw(canvas);
-                            onDraw(canvas);
+                            draw(canvas);
                         }
                     }
-                    catch (Exception e) { }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     finally
                     {
                         if (canvas != null)
@@ -159,11 +191,21 @@ public class SpecksGameActivity extends AppCompatActivity {
                         }
                     }
                 }
+                if (cardField.gameFinished()) {
+                    Intent intent = new Intent(SpecksGameActivity.this, GameFinishedActivity.class);
+                    intent.putExtra("difficulty", difficulty);
+                    intent.putExtra("mistakes", 0);
+                    intent.putExtra("score", 0);
+                    intent.putExtra("id", id);
+                    startActivity(intent);
+                }
+                finish();
             }
         }
 
         @Override
-        protected void onDraw(Canvas canvas) {
+        public void draw(Canvas canvas) {
+            super.draw(canvas);
             canvas.drawColor(Color.WHITE);
             cardField.onDraw(canvas);
         }

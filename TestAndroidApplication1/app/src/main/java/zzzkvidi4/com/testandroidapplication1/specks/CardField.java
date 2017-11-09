@@ -25,9 +25,9 @@ public class CardField {
     private int cardHeight;
     private int topMargin;
     private int state;
+    private int openedCards;
 
-    CardGameObject firstCard;
-    CardGameObject secondCard;
+    private CardGameObject firstCard;
 
     public CardField(int fieldWidth, int fieldHeight){
         this.fieldWidth = fieldWidth;
@@ -37,9 +37,10 @@ public class CardField {
 
     public void initialize(int canvasWidth, int canvasHeight, int topMargin, View view) {
         state = STATE_NO_SELECTED_CARDS;
+        openedCards = 0;
         this.topMargin = topMargin;
         cardWidth = (canvasWidth - (fieldWidth - 1) * 10) / (fieldWidth);
-        cardHeight = (canvasHeight - (fieldHeight - 1) * 10) / (fieldHeight);
+        cardHeight = (canvasHeight - topMargin - (fieldHeight - 1) * 10) / (fieldHeight);
         int elementCount = fieldWidth * fieldHeight;
         int[] rndArray = new int[elementCount];
         for (int i = 0; i < elementCount; ++i){
@@ -48,7 +49,7 @@ public class CardField {
         int setted = 0;
         Random rnd = new Random();
         for (int k = 0; k < fieldWidth * fieldHeight / 2; ++k){
-            int firstPos = rnd.nextInt(elementCount);
+            int firstPos = rnd.nextInt(elementCount - setted);
             while (rndArray[firstPos] != -1) {
                 ++firstPos;
                 if (firstPos >= elementCount){
@@ -86,26 +87,22 @@ public class CardField {
             y -= (cardHeight + 10);
             ++row;
         }
-        if (y < 0) {
-            row = -1;
-        } else {
+        if (y >= 0) {
             int column = 0;
             while (x > cardWidth) {
                 x -= (cardWidth + 10);
                 ++column;
             }
-            if (x < 0) {
-                column = -1;
-            } else if (row >= 0){
+            if ((x >= 0) && (row >= 0)) {
                 if ((cardField[row][column].getState() != CardGameObject.GUESSED) && (!cardField[row][column].equals(firstCard))) {
                     cardField[row][column].changeVisible();
+                    checkFieldState(cardField[row][column]);
                 }
-                checkFieldState(cardField[row][column]);
             }
         }
     }
 
-    public void checkFieldState(CardGameObject card){
+    private void checkFieldState(CardGameObject card){
         switch (state) {
             case STATE_NO_SELECTED_CARDS:{
                 firstCard = card;
@@ -113,10 +110,11 @@ public class CardField {
                 break;
             }
             case STATE_ONE_CARD_SELECTED: {
-                secondCard = card;
-                if (firstCard.getType() == secondCard.getType()) {
+                CardGameObject secondCard = card;
+                if (firstCard.getType() == secondCard.getType() && !firstCard.equals(secondCard)) {
                     firstCard.setGuessed();
                     secondCard.setGuessed();
+                    openedCards += 2;
                 } else {
                     try {
                         Thread.sleep(1000);
@@ -124,15 +122,28 @@ public class CardField {
                     catch (InterruptedException e){
                         e.printStackTrace();
                     }
-                    firstCard.setHiiden(true);
-                    secondCard.setHiiden(true);
+                    firstCard.setHidden(true);
+                    secondCard.setHidden(true);
                 }
+                firstCard = null;
                 state = STATE_NO_SELECTED_CARDS;
             }
         }
     }
 
-    public Bitmap getBitmapFromResources(int number, View view, int cardWidth, int cardHeight){
+    public boolean gameFinished(){
+        return fieldWidth*fieldHeight == openedCards;
+    }
+
+    public void setFieldHidden(boolean hidden){
+        for (int i = 0; i < fieldHeight; ++i){
+            for (int j = 0; j < fieldWidth; ++j){
+                cardField[i][j].setHidden(hidden);
+            }
+        }
+    }
+
+    private Bitmap getBitmapFromResources(int number, View view, int cardWidth, int cardHeight){
         Bitmap bitmap;
         switch (number){
             case 0:{
@@ -158,7 +169,9 @@ public class CardField {
     public void onDraw(Canvas canvas){
         for (int i = 0; i < fieldHeight; ++i){
             for (int j = 0; j < fieldWidth; ++j){
-                cardField[i][j].onDraw(canvas, topMargin);
+                if (cardField[i][j] != null) {
+                    cardField[i][j].onDraw(canvas, topMargin);
+                }
             }
         }
     }

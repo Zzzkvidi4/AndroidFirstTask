@@ -11,4 +11,6 @@
     <string name="difficultyString">Difficulty</string>
     <string name="authorizeString">Authorize</string>
     <string name="log_out_btn_text">Logout</string>
+    <string name="try_again_btn_text">Try again!</string>
+    <string name="back_to_menu_btn_text">Back to menu</string>
 </resources>
