@@ -36,7 +36,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GameFinishedActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GamePauseActivity"
+            android:theme="@style/Theme.AppCompat.Dialog" />
     </application>
 
 </manifest>

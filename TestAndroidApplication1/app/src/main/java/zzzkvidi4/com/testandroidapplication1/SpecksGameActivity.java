@@ -222,7 +222,8 @@ public class SpecksGameActivity extends AppCompatActivity {
     private class PauseOnClickListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            finish();
+            Intent intent = new Intent(SpecksGameActivity.this, GamePauseActivity.class);
+            startActivity(intent);
         }
     }
 }
