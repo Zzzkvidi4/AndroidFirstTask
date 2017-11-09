@@ -2,9 +2,9 @@ package zzzkvidi4.com.testandroidapplication1;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
+import zzzkvidi4.com.testandroidapplication1.onClickListeners.BackToGameOnClickListener;
 import zzzkvidi4.com.testandroidapplication1.onClickListeners.BackToMenuOnClickListener;
 
 public class GamePauseActivity extends AppCompatActivity {
@@ -16,13 +16,7 @@ public class GamePauseActivity extends AppCompatActivity {
         Button backToMenuBtn = (Button)findViewById(R.id.backToMenuBtn);
         backToMenuBtn.setOnClickListener(new BackToMenuOnClickListener(this));
         Button backToGameBtn = (Button)findViewById(R.id.backToGameBtn);
-        backToGameBtn.setOnClickListener(new BackToGameOnClickListener());
+        backToGameBtn.setOnClickListener(new BackToGameOnClickListener(this));
     }
 
-    class BackToGameOnClickListener implements View.OnClickListener{
-        @Override
-        public void onClick(View view) {
-            finish();
-        }
-    }
 }
