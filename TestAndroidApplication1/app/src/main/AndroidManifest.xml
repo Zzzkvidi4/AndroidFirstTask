@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,9 +25,21 @@
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
-        <activity android:name=".LoginActivity"  android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".GameOptionActivity"  android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".SpecksGameActivity"  android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GameOptionActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SpecksGameActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GameFinishedActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GamePauseActivity"
+            android:theme="@style/Theme.AppCompat.Dialog" />
     </application>
 
 </manifest>
