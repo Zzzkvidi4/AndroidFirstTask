@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/button1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
+    android:background="@drawable/button"
+    android:gravity="start|center_vertical"
     android:padding="16sp"
     android:text="Text"
-    android:textAlignment="textStart"
     android:textAllCaps="false"
     android:textAppearance="@style/TextAppearance.AppCompat"
-    android:textColor="@color/colorForElem"
-    android:textSize="24sp"></TextView>
+    android:textColor="@color/mainFontColor"
+    android:textSize="24sp">
+</TextView>

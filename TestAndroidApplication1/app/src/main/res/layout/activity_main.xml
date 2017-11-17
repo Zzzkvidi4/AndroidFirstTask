@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/MainTheme"
+    android:background="@color/mainTheme"
     tools:context="zzzkvidi4.com.testandroidapplication1.MainActivity">
 
     <TextView
@@ -15,7 +15,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:textColor="@color/colorForElem"
+        android:textColor="@color/mainFontColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.021"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -31,7 +31,10 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="60dp"
-        android:background="#333399"
+        android:background="@drawable/button"
+        android:scrollbarAlwaysDrawHorizontalTrack="false"
+        android:scrollbarAlwaysDrawVerticalTrack="false"
+        android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -43,10 +46,10 @@
         android:id="@+id/logoutBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorForElem"
+        android:background="@drawable/button"
         android:text="@string/log_out_btn_text_rus"
         android:textAllCaps="false"
-        android:textColor="@color/MainTheme"
+        android:textColor="@color/mainFontColor"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:textAllCaps="false" />

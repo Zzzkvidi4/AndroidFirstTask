@@ -13,6 +13,8 @@
     <string name="log_out_btn_text">Logout</string>
     <string name="authorizeStringRU">Авторизоваться</string>
     <string name="log_out_btn_text_rus">Выйти</string>
+    <string name="difficultyString_rus">Сложность</string>
+    <string name="startGameBtnTextRus">Старт!</string>
     <string name="try_again_btn_text">Try again!</string>
     <string name="back_to_menu_btn_text">Back to menu</string>
     <string name="back_to_game_btn_text">Back to game</string>
