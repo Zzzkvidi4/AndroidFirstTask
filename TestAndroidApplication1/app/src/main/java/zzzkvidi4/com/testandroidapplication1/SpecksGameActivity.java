@@ -83,6 +83,7 @@ public class SpecksGameActivity extends AppCompatActivity {
     public class GameView extends SurfaceView{
         private CardField cardField;
         private GameThread gameThread;
+        private boolean isTouchable;
 
         public GameView(Context context, int fieldWidth, int fieldHeight) {
             super(context);
@@ -135,6 +136,7 @@ public class SpecksGameActivity extends AppCompatActivity {
 
             @Override
             public void run() {
+                isTouchable = false;
                 Canvas canvas = view.getHolder().lockCanvas();
                 draw(canvas);
                 if (canvas != null){
@@ -168,6 +170,7 @@ public class SpecksGameActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 cardField.setFieldHidden(true);
+                isTouchable = true;
                 while (isRunning && !cardField.gameFinished())
                 {
                     canvas = null;
@@ -212,7 +215,7 @@ public class SpecksGameActivity extends AppCompatActivity {
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if ((isTouchable) && (event.getAction() == MotionEvent.ACTION_DOWN)) {
                 cardField.checkOnTouch((int) event.getX(), (int) event.getY());
             }
             return true;
