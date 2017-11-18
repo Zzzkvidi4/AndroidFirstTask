@@ -165,11 +165,11 @@ public class CardField {
                 break;
             }
             case 2:{
-                bitmap = BitmapFactory.decodeResource(resources, R.drawable.book);
+                bitmap = BitmapFactory.decodeResource(resources, R.drawable.mable);
                 break;
             }
             default:{
-                bitmap = BitmapFactory.decodeResource(resources, R.drawable.mable);
+                bitmap = BitmapFactory.decodeResource(resources, R.drawable.book);
                 break;
             }
         }

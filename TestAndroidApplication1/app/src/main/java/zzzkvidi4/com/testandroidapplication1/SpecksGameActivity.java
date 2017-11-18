@@ -180,7 +180,7 @@ public class SpecksGameActivity extends AppCompatActivity {
                     }
                 }
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1500);
                 }
                 catch (InterruptedException e){
                     e.printStackTrace();
@@ -211,6 +211,12 @@ public class SpecksGameActivity extends AppCompatActivity {
                     }
                 }
                 if (cardField.gameFinished()) {
+                    try {
+                        Thread.sleep(500);
+                    }
+                    catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
                     Intent intent = new Intent(SpecksGameActivity.this, GameFinishedActivity.class);
                     intent.putExtra("difficulty", difficulty);
                     intent.putExtra("mistakes", 0);

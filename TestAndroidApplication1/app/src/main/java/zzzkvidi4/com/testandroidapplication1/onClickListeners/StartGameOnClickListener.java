@@ -37,6 +37,8 @@ public class StartGameOnClickListener implements View.OnClickListener {
             GameActivityFactory gameActivityFactory = GameActivityFactory.getInstance();
             Activity gameActivity = gameActivityFactory.createNewActivity(id);
             Intent intent = new Intent(activity, gameActivity.getClass());
+            //to do: чистить только вьюхи от окончания игры
+            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.putExtra("difficulty", difficulty);
             intent.putExtra("score", score);
             intent.putExtra("isFirst", isFirstLaunch);
