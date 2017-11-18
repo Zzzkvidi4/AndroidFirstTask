@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences("game_info0", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("name", "Парные карты");
-        editor.putString("description", "Открывайте одинаковые карты парами, пока они не закончатся!");
+        editor.putString("description", "Открывайте одинаковые карты парами,\nпока они не закончатся!");
         editor.apply();
     }
 

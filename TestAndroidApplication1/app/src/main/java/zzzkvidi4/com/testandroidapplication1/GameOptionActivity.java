@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import zzzkvidi4.com.testandroidapplication1.onClickListeners.StartGameOnClickListener;
 
@@ -30,6 +31,10 @@ public class GameOptionActivity extends AppCompatActivity {
         difficultySeekBar.setMax(maxDifficulty);
         Button startBtn = (Button) findViewById(R.id.startBtn);
         startBtn.setOnClickListener(new StartGameOnClickListener((int)id, difficultySeekBar.getProgress(), previousScore, false, this));
+        TextView gameNameTextView = (TextView)findViewById(R.id.gameNameTextView);
+        gameNameTextView.setText(name);
+        TextView gameDescriptionTextView = (TextView)findViewById(R.id.gameDescriptionTextView);
+        gameDescriptionTextView.setText(description);
     }
 
     public void retrieveInformationAboutGame(){

@@ -3,12 +3,16 @@ package zzzkvidi4.com.testandroidapplication1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -51,104 +55,116 @@ public class SpecksGameActivity extends AppCompatActivity {
         score = intent.getIntExtra("score", -1);
         isFirst = intent.getBooleanExtra("isFirst", true);
         id = intent.getIntExtra("id", -1);
-        //setContentView(R.layout.activity_specks_game);
+        setContentView(R.layout.activity_specks_game);
         //infoTextView = (TextView)findViewById(R.id.infoTextView);
         //infoTextView.append("Diff: " + difficulty + "; Score: " + score);
 
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        gameWidgets = new LinearLayout(this);
+        //gameWidgets = new LinearLayout(this);
 
-        Button pauseBtn = new Button(this);
-        pauseBtn.setText("Pause");
+        Button pauseBtn = (Button)findViewById(R.id.pauseGameBtn);
+        //auseBtn.setText("Пауза");
+        //pauseBtn.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(this, R.drawable.button), null, null, null);
+        //pauseBtn.setBackground(Drawable.createFromPath("D:\\Projects\\AndroidFirstTask\\TestAndroidApplication1\\app\\src\\main\\res\\drawable\\button.xml"));
         pauseBtn.setOnClickListener(new PauseOnClickListener());
 
-        gameWidgets.addView(pauseBtn);
+        //gameWidgets.addView(pauseBtn);
 
-        FrameLayout game = new FrameLayout(this);
-        SurfaceView gameView = new GameView(this, 2, 3);
+        //FrameLayout game = new FrameLayout(this);
+        //SurfaceView gameView = new GameView(this, 2, 3);
 
-        game.addView(gameView);
-        game.addView(gameWidgets);
-
-        setContentView(game);
+        //game.addView(gameView);
+        //game.addView(gameWidgets);
+        SurfaceView view = (SurfaceView)findViewById(R.id.gameSurfaceView);
+        GameView gameView = new GameView(view.getHolder(), 2, 3, getResources());
+        view.getHolder().addCallback(gameView);
+        view.setOnTouchListener(new CardsOnTouchListener(gameView.getField()));
+        //setContentView(R.layout.activity_specks_game);
     }
 
     @Override
     public void onBackPressed() {
     }
 
-    public class GameView extends SurfaceView{
+    public class GameView implements SurfaceHolder.Callback{
         private CardField cardField;
         private GameThread gameThread;
-        private boolean isTouchable;
+        private Resources resources;
 
-        public GameView(Context context, int fieldWidth, int fieldHeight) {
-            super(context);
+        public GameView(SurfaceHolder holder, int fieldWidth, int fieldHeight, Resources resources){
             cardField = new CardField(fieldWidth, fieldHeight);
-            this.gameThread = new GameThread(this);
-            getHolder().addCallback(new SurfaceHolder.Callback()
+            this.resources = resources;
+            gameThread = new GameThread(SpecksGameActivity.this.getResources(), holder);
+        }
+
+        public CardField getField(){
+            return cardField;
+        }
+
+        /*** Уничтожение области рисования */
+        public void surfaceDestroyed(SurfaceHolder holder)
+        {
+            boolean retry = true;
+            gameThread.setRunning(false);
+            while (retry)
             {
-                /*** Уничтожение области рисования */
-                public void surfaceDestroyed(SurfaceHolder holder)
+                try
                 {
-                    boolean retry = true;
-                    gameThread.setRunning(false);
-                    while (retry)
-                    {
-                        try
-                        {
-                            // ожидание завершение потока
-                            gameThread.join();
-                            retry = false;
-                        }
-                        catch (InterruptedException e) { }
-                    }
+                    // ожидание завершение потока
+                    gameThread.join();
+                    retry = false;
                 }
+                catch (InterruptedException e) { }
+            }
+        }
 
-                /** Создание области рисования */
-                public void surfaceCreated(SurfaceHolder holder)
-                {
-                    gameThread.setRunning(true);
-                    gameThread.start();
-                }
+        /** Создание области рисования */
+        public void surfaceCreated(SurfaceHolder holder)
+        {
+            gameThread.setRunning(true);
+            gameThread.start();
+        }
 
-                /** Изменение области рисования */
-                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-                {
-                }
-            });
+        /** Изменение области рисования */
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
+        {
         }
 
         private class GameThread extends Thread {
             private boolean isRunning;
-            private GameView view;
+            private SurfaceHolder holder;
+            private Resources resources;
 
-            GameThread(GameView view){
-                this.view = view;
+            GameThread(Resources resources, SurfaceHolder holder){
+                this.holder = holder;
+                this.resources = resources;
             }
 
             void setRunning(boolean isRunning){
                 this.isRunning = isRunning;
             }
 
+
             @Override
             public void run() {
-                isTouchable = false;
-                Canvas canvas = view.getHolder().lockCanvas();
+                cardField.setTouchable(false);
+                Canvas canvas = holder.lockCanvas();
                 draw(canvas);
+                int width = canvas.getWidth();
+                int height = canvas.getHeight();
                 if (canvas != null){
-                    view.getHolder().unlockCanvasAndPost(canvas);
+                    holder.unlockCanvasAndPost(canvas);
                 }
-                cardField.initialize(getWidth(), getHeight(), 50, view);
+                cardField.initialize(width, height, 0, resources);
                 cardField.setFieldHidden(false);
                 try
                 {
                     // подготовка Canvas-а
-                    canvas = view.getHolder().lockCanvas();
-                    synchronized (view.getHolder())
+                    canvas = holder.lockCanvas();
+                    synchronized (holder)
                     {
                         draw(canvas);
                     }
@@ -160,7 +176,7 @@ public class SpecksGameActivity extends AppCompatActivity {
                 {
                     if (canvas != null)
                     {
-                        view.getHolder().unlockCanvasAndPost(canvas);
+                        holder.unlockCanvasAndPost(canvas);
                     }
                 }
                 try {
@@ -170,15 +186,15 @@ public class SpecksGameActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 cardField.setFieldHidden(true);
-                isTouchable = true;
+                cardField.setTouchable(true);
                 while (isRunning && !cardField.gameFinished())
                 {
                     canvas = null;
                     try
                     {
                         // подготовка Canvas-а
-                        canvas = view.getHolder().lockCanvas();
-                        synchronized (view.getHolder())
+                        canvas = holder.lockCanvas();
+                        synchronized (holder)
                         {
                             draw(canvas);
                         }
@@ -190,7 +206,7 @@ public class SpecksGameActivity extends AppCompatActivity {
                     {
                         if (canvas != null)
                         {
-                            view.getHolder().unlockCanvasAndPost(canvas);
+                            holder.unlockCanvasAndPost(canvas);
                         }
                     }
                 }
@@ -206,20 +222,19 @@ public class SpecksGameActivity extends AppCompatActivity {
             }
         }
 
-        @Override
         public void draw(Canvas canvas) {
-            super.draw(canvas);
-            canvas.drawColor(Color.WHITE);
+            //super.draw(canvas);
+            canvas.drawColor(Color.parseColor("#d7e8ef"));
             cardField.onDraw(canvas);
         }
 
-        @Override
+        /*@Override
         public boolean onTouchEvent(MotionEvent event) {
             if ((isTouchable) && (event.getAction() == MotionEvent.ACTION_DOWN)) {
                 cardField.checkOnTouch((int) event.getX(), (int) event.getY());
             }
             return true;
-        }
+        }*/
     }
 
     private class PauseOnClickListener implements View.OnClickListener{
@@ -227,6 +242,22 @@ public class SpecksGameActivity extends AppCompatActivity {
         public void onClick(View view) {
             Intent intent = new Intent(SpecksGameActivity.this, GamePauseActivity.class);
             startActivity(intent);
+        }
+    }
+
+    private class CardsOnTouchListener implements View.OnTouchListener{
+        private CardField cardField;
+
+        CardsOnTouchListener(CardField cardField){
+            this.cardField = cardField;
+        }
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            view.performClick();
+            if ((cardField.isTouchable()) && (motionEvent.getAction() == MotionEvent.ACTION_UP)) {
+                cardField.checkOnTouch((int) motionEvent.getX(), (int) motionEvent.getY());
+            }
+            return true;
         }
     }
 }

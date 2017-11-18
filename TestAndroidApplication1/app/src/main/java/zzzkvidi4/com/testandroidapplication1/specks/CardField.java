@@ -1,5 +1,6 @@
 package zzzkvidi4.com.testandroidapplication1.specks;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -26,6 +27,7 @@ public class CardField {
     private int topMargin;
     private int state;
     private int openedCards;
+    private boolean touchable;
 
     private CardGameObject firstCard;
 
@@ -35,7 +37,7 @@ public class CardField {
         cardField = new CardGameObject[fieldHeight][fieldWidth];
     }
 
-    public void initialize(int canvasWidth, int canvasHeight, int topMargin, View view) {
+    public void initialize(int canvasWidth, int canvasHeight, int topMargin, Resources resources) {
         state = STATE_NO_SELECTED_CARDS;
         openedCards = 0;
         this.topMargin = topMargin;
@@ -71,13 +73,21 @@ public class CardField {
             rndArray[firstPos] = k;
             ++setted;
         }
-        Bitmap hiddenBitmap = getBitmapFromResources(5, view, cardWidth, cardHeight);
+        Bitmap hiddenBitmap = getBitmapFromResources(5, resources, cardWidth, cardHeight);
         for(int i = 0; i < fieldHeight; ++i){
             for (int j = 0; j < fieldWidth; ++j){
-                CardGameObject card = new CardGameObject(j * (cardWidth + 10), i * (cardHeight + 10), getBitmapFromResources(rndArray[i * fieldWidth + j], view, cardWidth, cardHeight), hiddenBitmap, rndArray[i * fieldWidth + j]);
+                CardGameObject card = new CardGameObject(j * (cardWidth + 10), i * (cardHeight + 10), getBitmapFromResources(rndArray[i * fieldWidth + j], resources, cardWidth, cardHeight), hiddenBitmap, rndArray[i * fieldWidth + j]);
                 cardField[i][j] = card;
             }
         }
+    }
+
+    public boolean isTouchable(){
+        return touchable;
+    }
+
+    public void setTouchable(boolean value){
+        touchable = value;
     }
 
     public void checkOnTouch(int x, int y){
@@ -143,23 +153,23 @@ public class CardField {
         }
     }
 
-    private Bitmap getBitmapFromResources(int number, View view, int cardWidth, int cardHeight){
+    private Bitmap getBitmapFromResources(int number, Resources resources, int cardWidth, int cardHeight){
         Bitmap bitmap;
         switch (number){
             case 0:{
-                bitmap = BitmapFactory.decodeResource(view.getResources(), R.drawable.dipper);
+                bitmap = BitmapFactory.decodeResource(resources, R.drawable.dipper);
                 break;
             }
             case 1:{
-                bitmap = BitmapFactory.decodeResource(view.getResources(), R.drawable.stan);
+                bitmap = BitmapFactory.decodeResource(resources, R.drawable.stan);
                 break;
             }
             case 2:{
-                bitmap = BitmapFactory.decodeResource(view.getResources(), R.drawable.book);
+                bitmap = BitmapFactory.decodeResource(resources, R.drawable.book);
                 break;
             }
             default:{
-                bitmap = BitmapFactory.decodeResource(view.getResources(), R.drawable.mable);
+                bitmap = BitmapFactory.decodeResource(resources, R.drawable.mable);
                 break;
             }
         }
