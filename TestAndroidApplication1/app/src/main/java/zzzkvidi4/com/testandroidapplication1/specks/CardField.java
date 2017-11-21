@@ -155,6 +155,10 @@ public class CardField {
 
     private Bitmap getBitmapFromResources(int number, Resources resources, int cardWidth, int cardHeight){
         Bitmap bitmap;
+        // let ids = [R.dipper, R.stan]
+        // let current = ids[number]
+
+        // bitmap = (resources, current)
         switch (number){
             case 0:{
                 bitmap = BitmapFactory.decodeResource(resources, R.drawable.dipper);
