@@ -14,18 +14,30 @@ public class CardGameObject {
     static final int GUESSED = 1;
     static final int NOT_GUESSED = 2;
     private int x, y;
-    private Bitmap faceImage;
-    private Bitmap hiddenImage;
+    private int faceImageId;
+    private int hiddenImageId;
     private boolean isHidden = true;
     private int type;
     private int state = NOT_GUESSED;
 
-    CardGameObject(int x, int y, Bitmap faceImage, Bitmap hiddenImage, int type) {
+    CardGameObject(int x, int y, int faceImageId, int hiddenImageId, int type) {
         this.x = x;
         this.y = y;
-        this.faceImage = faceImage;
-        this.hiddenImage = hiddenImage;
+        this.faceImageId = faceImageId;
+        this.hiddenImageId = hiddenImageId;
         this.type = type;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public int getX(){
+        return x;
+    }
+
+    public int getY(){
+        return y;
     }
 
     void setHidden(boolean hidden){
@@ -48,11 +60,7 @@ public class CardGameObject {
         return type;
     }
 
-    void onDraw(Canvas canvas, int topMargin){
-        if (isHidden) {
-            canvas.drawBitmap(hiddenImage, x, topMargin + y, null);
-        } else {
-            canvas.drawBitmap(faceImage, x, topMargin + y, null);
-        }
+    int getFaceImageId(){
+        return faceImageId;
     }
 }

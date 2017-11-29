@@ -22,8 +22,8 @@ public class GameFinishedActivity extends AppCompatActivity {
         id = intent.getIntExtra("id", 0);
         score = intent.getIntExtra("score", 0);
         Button tryAgainBtn = (Button)findViewById(R.id.tryAgainBtn);
-        tryAgainBtn.setOnClickListener(new StartGameOnClickListener(id, difficulty, score, false, this));
+        tryAgainBtn.setOnClickListener(new StartGameOnClickListener(id, difficulty, score, false, this, true));
         Button backToMenuBtn = (Button)findViewById(R.id.backToMenuBtn);
-        backToMenuBtn.setOnClickListener(new BackToMenuOnClickListener(this));
+        backToMenuBtn.setOnClickListener(new BackToMenuOnClickListener(this, true));
     }
 }

@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.view.View;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import zzzkvidi4.com.testandroidapplication1.R;
 
@@ -19,17 +21,22 @@ public class CardField {
     private static final int STATE_NO_SELECTED_CARDS = 1;
     private static final int STATE_ONE_CARD_SELECTED = 2;
     private static final int STATE_TWO_CARDS_SELECTED = 3;
+    public static final int[] IMAGE_IDS = new int[] {R.drawable.book, R.drawable.dipper, R.drawable.stan, R.drawable.mable};
     private CardGameObject[][] cardField;
     private int fieldWidth;
     private int fieldHeight;
     private int cardWidth;
     private int cardHeight;
-    private int topMargin;
     private int state;
     private int openedCards;
-    private boolean touchable;
+    private boolean isTouchable = true;
+
+    public CardGameObject[][] getCardField(){
+        return cardField;
+    }
 
     private CardGameObject firstCard;
+    private CardGameObject secondCard;
 
     public CardField(int fieldWidth, int fieldHeight){
         this.fieldWidth = fieldWidth;
@@ -37,61 +44,45 @@ public class CardField {
         cardField = new CardGameObject[fieldHeight][fieldWidth];
     }
 
-    public void initialize(int canvasWidth, int canvasHeight, int topMargin, Resources resources) {
+    public int getCardWidth(int canvasWidth){
+        return (canvasWidth - (fieldWidth - 1) * 10) / (fieldWidth);
+    }
+
+    public int getCardHeight(int canvasHeight){
+        return (canvasHeight - (fieldHeight - 1) * 10) / (fieldHeight);
+    }
+
+    public void initialize(int canvasWidth, int canvasHeight) {
         state = STATE_NO_SELECTED_CARDS;
         openedCards = 0;
-        this.topMargin = topMargin;
+
         cardWidth = (canvasWidth - (fieldWidth - 1) * 10) / (fieldWidth);
-        cardHeight = (canvasHeight - topMargin - (fieldHeight - 1) * 10) / (fieldHeight);
+        cardHeight = (canvasHeight - (fieldHeight - 1) * 10) / (fieldHeight);
         int elementCount = fieldWidth * fieldHeight;
         int[] rndArray = new int[elementCount];
         for (int i = 0; i < elementCount; ++i){
-            rndArray[i] = -1;
+            rndArray[i] = (i + 2) / 2;
         }
-        int setted = 0;
         Random rnd = new Random();
-        for (int k = 0; k < fieldWidth * fieldHeight / 2; ++k){
-            int firstPos = rnd.nextInt(elementCount - setted);
-            while (rndArray[firstPos] != -1) {
-                ++firstPos;
-                if (firstPos >= elementCount){
-                    firstPos = 0;
-                }
-            }
-            rndArray[firstPos] = k;
-            ++setted;
-            int shift = rnd.nextInt(elementCount - setted) + 1;
-            do{
-                ++firstPos;
-                if (firstPos >= elementCount){
-                    firstPos = 0;
-                }
-                if (rndArray[firstPos] == -1){
-                    --shift;
-                }
-            } while(shift > 0);
-            rndArray[firstPos] = k;
-            ++setted;
+        for (int i = 0; i < 50; ++i){
+            int pos1 = rnd.nextInt(elementCount);
+            int pos2 = rnd.nextInt(elementCount);
+            int tmp = rndArray[pos1];
+            rndArray[pos1] = rndArray[pos2];
+            rndArray[pos2] = tmp;
         }
-        Bitmap hiddenBitmap = getBitmapFromResources(5, resources, cardWidth, cardHeight);
         for(int i = 0; i < fieldHeight; ++i){
             for (int j = 0; j < fieldWidth; ++j){
-                CardGameObject card = new CardGameObject(j * (cardWidth + 10), i * (cardHeight + 10), getBitmapFromResources(rndArray[i * fieldWidth + j], resources, cardWidth, cardHeight), hiddenBitmap, rndArray[i * fieldWidth + j]);
+                CardGameObject card = new CardGameObject(j * (cardWidth + 10), i * (cardHeight + 10), rndArray[i * fieldWidth + j], 0, rndArray[i * fieldWidth + j]);
                 cardField[i][j] = card;
             }
         }
     }
 
-    public boolean isTouchable(){
-        return touchable;
-    }
-
-    public void setTouchable(boolean value){
-        touchable = value;
-    }
-
     public void checkOnTouch(int x, int y){
-        y = y - topMargin;
+        if (!isTouchable){
+            return;
+        }
         int row = 0;
         while (y > cardHeight) {
             y -= (cardHeight + 10);
@@ -120,23 +111,18 @@ public class CardField {
                 break;
             }
             case STATE_ONE_CARD_SELECTED: {
-                CardGameObject secondCard = card;
+                secondCard = card;
                 if (firstCard.getType() == secondCard.getType() && !firstCard.equals(secondCard)) {
                     firstCard.setGuessed();
                     secondCard.setGuessed();
                     openedCards += 2;
+                    state = STATE_NO_SELECTED_CARDS;
+                    firstCard = null;
                 } else {
-                    try {
-                        Thread.sleep(1000);
-                    }
-                    catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                    firstCard.setHidden(true);
-                    secondCard.setHidden(true);
+                    isTouchable = false;
+                    Timer timer = new Timer();
+                    timer.schedule(new HideWrongCards(), 2000);
                 }
-                firstCard = null;
-                state = STATE_NO_SELECTED_CARDS;
             }
         }
     }
@@ -153,40 +139,15 @@ public class CardField {
         }
     }
 
-    private Bitmap getBitmapFromResources(int number, Resources resources, int cardWidth, int cardHeight){
-        Bitmap bitmap;
-        // let ids = [R.dipper, R.stan]
-        // let current = ids[number]
-
-        // bitmap = (resources, current)
-        switch (number){
-            case 0:{
-                bitmap = BitmapFactory.decodeResource(resources, R.drawable.dipper);
-                break;
-            }
-            case 1:{
-                bitmap = BitmapFactory.decodeResource(resources, R.drawable.stan);
-                break;
-            }
-            case 2:{
-                bitmap = BitmapFactory.decodeResource(resources, R.drawable.mable);
-                break;
-            }
-            default:{
-                bitmap = BitmapFactory.decodeResource(resources, R.drawable.book);
-                break;
-            }
-        }
-        return Bitmap.createScaledBitmap(bitmap, cardWidth, cardHeight, false);
-    }
-
-    public void onDraw(Canvas canvas){
-        for (int i = 0; i < fieldHeight; ++i){
-            for (int j = 0; j < fieldWidth; ++j){
-                if (cardField[i][j] != null) {
-                    cardField[i][j].onDraw(canvas, topMargin);
-                }
-            }
+    private class HideWrongCards extends TimerTask{
+        @Override
+        public void run() {
+            firstCard.setHidden(true);
+            secondCard.setHidden(true);
+            firstCard = null;
+            secondCard = null;
+            state = STATE_NO_SELECTED_CARDS;
+            isTouchable = true;
         }
     }
 }
