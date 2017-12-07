@@ -1,43 +1,20 @@
 package zzzkvidi4.com.testandroidapplication1;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
-import zzzkvidi4.com.testandroidapplication1.specks.CardField;
+import zzzkvidi4.com.testandroidapplication1.gameEngine.GameController;
+import zzzkvidi4.com.testandroidapplication1.gameEngine.GameSurfaceHolderCallback;
 import zzzkvidi4.com.testandroidapplication1.specks.CardFieldController;
-import zzzkvidi4.com.testandroidapplication1.specks.CardGameObject;
-import zzzkvidi4.com.testandroidapplication1.tools.BitmapTools;
 
 public class SpecksGameActivity extends AppCompatActivity {
     private int difficulty;
@@ -75,110 +52,19 @@ public class SpecksGameActivity extends AppCompatActivity {
         //gameWidgets.addView(pauseBtn);
 
         //FrameLayout game = new FrameLayout(this);
-        //SurfaceView gameView = new GameView(this, 2, 3);
+        //SurfaceView gameSurfaceHolderCallback = new GameSurfaceHolderCallback(this, 2, 3);
 
-        //game.addView(gameView);
+        //game.addView(gameSurfaceHolderCallback);
         //game.addView(gameWidgets);
         SurfaceView view = (SurfaceView)findViewById(R.id.gameSurfaceView);
         GameController controller = new CardFieldController(this, 2, 3, getResources());
-        GameView gameView = new GameView(view.getHolder(), controller);
-        view.getHolder().addCallback(gameView);
+        GameSurfaceHolderCallback gameSurfaceHolderCallback = new GameSurfaceHolderCallback(view.getHolder(), controller);
+        view.getHolder().addCallback(gameSurfaceHolderCallback);
         view.setOnTouchListener(new CardsOnTouchListener(controller));
-        //setContentView(R.layout.activity_specks_game);
     }
 
     @Override
     public void onBackPressed() {
-    }
-
-    public class GameView implements SurfaceHolder.Callback {
-        private GameThread gameThread;
-        private GameController controller;
-
-        public GameView(SurfaceHolder holder, GameController controller) {
-            //controller = new CardFieldController(SpecksGameActivity.this, fieldWidth, fieldHeight, getResources());
-            this.controller = controller;
-            this.gameThread = new GameThread(holder);
-        }
-
-        public void surfaceDestroyed(SurfaceHolder holder)
-        {
-            boolean retry = true;
-            gameThread.setRunning(false);
-            while (retry)
-            {
-                try
-                {
-                    // ожидание завершение потока
-                    gameThread.join();
-                    retry = false;
-                }
-                catch (InterruptedException e) { }
-            }
-        }
-
-        /** Создание области рисования */
-        public void surfaceCreated(SurfaceHolder holder)
-        {
-            gameThread.setRunning(true);
-            gameThread.start();
-        }
-
-        /** Изменение области рисования */
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-        {
-        }
-
-        private class GameThread extends Thread {
-            private boolean isRunning;
-            private SurfaceHolder holder;
-
-            GameThread(SurfaceHolder holder){
-                this.holder = holder;
-            }
-
-            void setRunning(boolean isRunning){
-                this.isRunning = isRunning;
-            }
-
-            @Override
-            public void run() {
-                Canvas canvas = holder.lockCanvas();
-                controller.initializeField(canvas.getWidth(), canvas.getHeight());
-                holder.unlockCanvasAndPost(canvas);
-                controller.startGameCycle();
-                while (isRunning)
-                {
-                    canvas = null;
-                    try
-                    {
-                        // подготовка Canvas-а
-                        canvas = holder.lockCanvas();
-                        synchronized (holder)
-                        {
-                            draw(canvas);
-                            controller.draw(canvas);
-                        }
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    finally
-                    {
-                        if (canvas != null)
-                        {
-                            holder.unlockCanvasAndPost(canvas);
-                        }
-                    }
-                }
-                finish();
-            }
-        }
-
-        public void draw(Canvas canvas) {
-            //super.draw(canvas);
-            canvas.drawColor(Color.parseColor("#d7e8ef"));
-        }
     }
 
     private class CardsOnTouchListener implements View.OnTouchListener{

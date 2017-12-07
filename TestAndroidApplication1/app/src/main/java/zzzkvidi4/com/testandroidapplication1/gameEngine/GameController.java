@@ -1,4 +1,4 @@
-package zzzkvidi4.com.testandroidapplication1;
+package zzzkvidi4.com.testandroidapplication1.gameEngine;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -10,8 +10,8 @@ import android.view.MotionEvent;
  */
 
 public interface GameController {
-    public void draw(Canvas canvas);
-    public void processTouch(MotionEvent event);
-    public void initializeField(int canvasWidth, int canvasHeight);
-    public void startGameCycle();
+    void draw(Canvas canvas);
+    void processTouch(MotionEvent event);
+    void initializeField(int canvasWidth, int canvasHeight);
+    void startGameCycle();
 }

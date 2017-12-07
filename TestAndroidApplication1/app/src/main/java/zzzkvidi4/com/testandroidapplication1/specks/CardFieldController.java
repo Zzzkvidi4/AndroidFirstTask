@@ -11,7 +11,7 @@ import android.view.MotionEvent;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import zzzkvidi4.com.testandroidapplication1.GameController;
+import zzzkvidi4.com.testandroidapplication1.gameEngine.GameController;
 import zzzkvidi4.com.testandroidapplication1.GameFinishedActivity;
 import zzzkvidi4.com.testandroidapplication1.R;
 
@@ -24,8 +24,8 @@ public class CardFieldController implements GameController {
     private CardField cardField;
     private int fieldWidth;
     private int fieldHeight;
-    public static final int[] BITMAP_IDS = new int[] {R.drawable.book, R.drawable.dipper, R.drawable.stan, R.drawable.mable};
-    public Bitmap[] Bitmaps;
+    private static final int[] BITMAP_IDS = new int[] {R.drawable.book, R.drawable.dipper, R.drawable.stan, R.drawable.mable};
+    private Bitmap[] Bitmaps;
     private boolean isTouchable = false;
     private Activity activity;
 
@@ -98,6 +98,7 @@ public class CardFieldController implements GameController {
         @Override
         public void run() {
             Intent intent = new Intent(activity, GameFinishedActivity.class);
+            activity.finish();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(intent);
         }
