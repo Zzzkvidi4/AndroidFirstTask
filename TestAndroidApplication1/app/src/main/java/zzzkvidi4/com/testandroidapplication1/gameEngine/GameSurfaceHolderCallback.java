@@ -15,7 +15,6 @@ public class GameSurfaceHolderCallback implements SurfaceHolder.Callback {
     private GameController controller;
 
     public GameSurfaceHolderCallback(SurfaceHolder holder, GameController controller) {
-        //controller = new CardFieldController(SpecksGameActivity.this, fieldWidth, fieldHeight, getResources());
         this.controller = controller;
         this.gameThread = new GameThread(holder);
     }
@@ -50,7 +49,7 @@ public class GameSurfaceHolderCallback implements SurfaceHolder.Callback {
 
     private class GameThread extends Thread {
         private boolean isRunning;
-        private SurfaceHolder holder;
+        private final SurfaceHolder holder;
 
         GameThread(SurfaceHolder holder) {
             this.holder = holder;
