@@ -22,13 +22,15 @@ public class StartGameOnClickListener implements View.OnClickListener {
     private int score;
     private boolean isFirstLaunch;
     private Activity activity;
+    private boolean isActivityFinishing;
 
-    public StartGameOnClickListener(int id, int difficulty, int score, boolean isFirstLaunch, Activity activity){
+    public StartGameOnClickListener(int id, int difficulty, int score, boolean isFirstLaunch, Activity activity, boolean isActivityFinishing){
         this.id = id;
         this.difficulty = difficulty;
         this.score = score;
         this.isFirstLaunch = isFirstLaunch;
         this.activity = activity;
+        this.isActivityFinishing = isActivityFinishing;
     }
 
     @Override
@@ -44,6 +46,9 @@ public class StartGameOnClickListener implements View.OnClickListener {
             intent.putExtra("isFirst", isFirstLaunch);
             intent.putExtra("id", id);
             activity.startActivity(intent);
+            if (isActivityFinishing){
+                activity.finish();
+            }
         }
         catch(InvocationTargetException e){
             Log.d(LOG_TAG, "error in method invoke!");

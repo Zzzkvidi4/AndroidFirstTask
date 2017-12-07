@@ -30,7 +30,7 @@ public class GameOptionActivity extends AppCompatActivity {
         difficultySeekBar.setProgress(currentDifficulty);
         difficultySeekBar.setMax(maxDifficulty);
         Button startBtn = (Button) findViewById(R.id.startBtn);
-        startBtn.setOnClickListener(new StartGameOnClickListener((int)id, difficultySeekBar.getProgress(), previousScore, false, this));
+        startBtn.setOnClickListener(new StartGameOnClickListener((int)id, difficultySeekBar.getProgress(), previousScore, false, this, true));
         TextView gameNameTextView = (TextView)findViewById(R.id.gameNameTextView);
         gameNameTextView.setText(name);
         TextView gameDescriptionTextView = (TextView)findViewById(R.id.gameDescriptionTextView);
