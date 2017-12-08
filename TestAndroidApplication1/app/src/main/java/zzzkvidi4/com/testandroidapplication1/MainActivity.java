@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         }
         infoTextView = (TextView)findViewById(R.id.infoTextView);
         selectGameListView = (ListView)findViewById(R.id.selectGameListView);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Specks", "Fuck", "This", "Shit", "I wanna", "Play", "Games", "Not", "Do", "This"});
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты"});
         selectGameListView.setAdapter(arrayAdapter);
         selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
         Button logoutBtn = (Button)findViewById(R.id.logoutBtn);
@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
     public void setupGamesInfo(){
         preferences = getSharedPreferences("game_info0", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("name", "Specks");
-        editor.putString("description", "Choose two similar cards while they are accessible!");
+        editor.putString("name", "Парные карты");
+        editor.putString("description", "Открывайте одинаковые карты парами,\nпока они не закончатся!");
         editor.apply();
     }
 
