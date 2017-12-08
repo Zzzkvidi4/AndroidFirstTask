@@ -1,11 +1,5 @@
 package zzzkvidi4.com.testandroidapplication1.specks;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.view.View;
-
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,6 +16,8 @@ public class CardField {
     private static final int STATE_ONE_CARD_SELECTED = 2;
     private static final int STATE_TWO_CARDS_SELECTED = 3;
     public static final int[] IMAGE_IDS = new int[] {R.drawable.book, R.drawable.dipper, R.drawable.stan, R.drawable.mable};
+    public static final int CARDS_DISTANCE = 10;
+    public static final int SHUFFLE_STEPS = 50;
     private CardGameObject[][] cardField;
     private int fieldWidth;
     private int fieldHeight;
@@ -45,26 +41,26 @@ public class CardField {
     }
 
     public int getCardWidth(int canvasWidth){
-        return (canvasWidth - (fieldWidth - 1) * 10) / (fieldWidth);
+        return (canvasWidth - (fieldWidth - 1) * CARDS_DISTANCE) / (fieldWidth);
     }
 
     public int getCardHeight(int canvasHeight){
-        return (canvasHeight - (fieldHeight - 1) * 10) / (fieldHeight);
+        return (canvasHeight - (fieldHeight - 1) * CARDS_DISTANCE) / (fieldHeight);
     }
 
     public void initialize(int canvasWidth, int canvasHeight) {
         state = STATE_NO_SELECTED_CARDS;
         openedCards = 0;
 
-        cardWidth = (canvasWidth - (fieldWidth - 1) * 10) / (fieldWidth);
-        cardHeight = (canvasHeight - (fieldHeight - 1) * 10) / (fieldHeight);
+        cardWidth = getCardWidth(canvasWidth);
+        cardHeight = getCardHeight(canvasHeight);
         int elementCount = fieldWidth * fieldHeight;
         int[] rndArray = new int[elementCount];
         for (int i = 0; i < elementCount; ++i){
             rndArray[i] = (i + 2) / 2;
         }
         Random rnd = new Random();
-        for (int i = 0; i < 50; ++i){
+        for (int i = 0; i < SHUFFLE_STEPS; ++i){
             int pos1 = rnd.nextInt(elementCount);
             int pos2 = rnd.nextInt(elementCount);
             int tmp = rndArray[pos1];
@@ -73,7 +69,7 @@ public class CardField {
         }
         for(int i = 0; i < fieldHeight; ++i){
             for (int j = 0; j < fieldWidth; ++j){
-                CardGameObject card = new CardGameObject(j * (cardWidth + 10), i * (cardHeight + 10), rndArray[i * fieldWidth + j], 0, rndArray[i * fieldWidth + j]);
+                CardGameObject card = new CardGameObject(j * (cardWidth + CARDS_DISTANCE), i * (cardHeight + CARDS_DISTANCE), rndArray[i * fieldWidth + j], 0, rndArray[i * fieldWidth + j]);
                 cardField[i][j] = card;
             }
         }
@@ -85,13 +81,13 @@ public class CardField {
         }
         int row = 0;
         while (y > cardHeight) {
-            y -= (cardHeight + 10);
+            y -= (cardHeight + CARDS_DISTANCE);
             ++row;
         }
         if (y >= 0) {
             int column = 0;
             while (x > cardWidth) {
-                x -= (cardWidth + 10);
+                x -= (cardWidth + CARDS_DISTANCE);
                 ++column;
             }
             if ((x >= 0) && (row >= 0)) {
