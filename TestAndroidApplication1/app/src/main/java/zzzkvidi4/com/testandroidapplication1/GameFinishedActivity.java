@@ -17,7 +17,10 @@ public class GameFinishedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_finished);
-        Intent intent = getIntent();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
         difficulty = intent.getIntExtra("difficulty", 0);
         id = intent.getIntExtra("id", 0);
         score = intent.getIntExtra("score", 0);

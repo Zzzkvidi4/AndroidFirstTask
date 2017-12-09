@@ -36,6 +36,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GameFinishedActivity"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GamePauseActivity"
