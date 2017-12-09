@@ -14,11 +14,11 @@ import java.util.List;
  * In package ${PACKAGE_NAME}.
  */
 
-class GameActivityFactory {
+public class GameActivityFactory {
     private SparseArray<Constructor<? extends Activity>> constructors;
     private static GameActivityFactory _factory = null;
 
-    static  GameActivityFactory getInstance(){
+    public static  GameActivityFactory getInstance(){
         if (_factory != null){
             return _factory;
         }
@@ -36,7 +36,7 @@ class GameActivityFactory {
         constructors.append(key, constructor);
     }
 
-    Activity createNewActivity(int key) throws InstantiationException, IllegalAccessException, InvocationTargetException{
+    public Activity createNewActivity(int key) throws InstantiationException, IllegalAccessException, InvocationTargetException{
         return constructors.get(key).newInstance();
     }
 }
