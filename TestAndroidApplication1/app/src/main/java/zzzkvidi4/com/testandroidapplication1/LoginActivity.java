@@ -1,8 +1,11 @@
 package zzzkvidi4.com.testandroidapplication1;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -34,12 +37,24 @@ public class LoginActivity extends AppCompatActivity {
         infoMessageTextView = (TextView)findViewById(R.id.infoMessageTextView);
     }
 
-    protected void setupUserInfo(String name, String surname){
+    protected void setupUserInfo(String name, String surname, int id){
         preferences = getSharedPreferences("user_info", MODE_PRIVATE);
         editor = preferences.edit();
-        editor.putString("name", name);
-        editor.putString("surname", surname);
+        editor.putInt("id", id);
         editor.apply();
+        if (id != -1){
+            ContentValues cv = new ContentValues();
+            SQLiteDatabase db = new DBHelper(this).getWritableDatabase();
+            Cursor c = db.query("user", null, "id_user = ?", new String[]{Integer.toString(id)}, null, null, null);
+            if (c.getCount() == 0) {
+                cv.put("name", name);
+                cv.put("surname", surname);
+                cv.put("id_user", id);
+                db.insert("user", null, cv);
+            }
+            c.close();
+            db.close();
+        }
     }
 
     @Override
@@ -55,15 +70,18 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject resp = response.json;
                         String name;
                         String surname;
+                        int id;
                         try{
+                            id = resp.getJSONObject("response").getInt("id");
                             name = resp.getJSONObject("response").getString("first_name");
                             surname = resp.getJSONObject("response").getString("last_name");
                         }
                         catch (JSONException e){
                             name = "Имя";
                             surname = "Фамилия";
+                            id = -1;
                         }
-                        setupUserInfo(name, surname);
+                        setupUserInfo(name, surname, id);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finishActivity(0);

@@ -79,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            SharedPreferences.Editor editor = getSharedPreferences("user_info", MODE_PRIVATE).edit();
+            editor.clear();
+            editor.apply();
             VKSdk.logout();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);

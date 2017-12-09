@@ -22,9 +22,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "description text not null,"
                 + "icon blob not null" + ");");
         db.execSQL("create table user("
-                + "id_user integer primary key autoincrement, "
-                + "id_server_user integer not null, "
-                + "games_revision_date date not null, "
+                + "id_user integer primary key, "
+                + "id_server_user integer, "
+                + "games_revision_date date, "
                 + "name text not null, "
                 + "surname text not null);");
         db.execSQL("create table game_match ("
