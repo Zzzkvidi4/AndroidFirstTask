@@ -65,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResult(VKAccessToken res) {
                 String token = res.accessToken;
                 String provider = "vk";
+                final String userId = res.userId;
                 VKRequest request = new VKRequest("account.getProfileInfo");
                 request.executeWithListener(new VKRequest.VKRequestListener() {
                     @Override
@@ -72,18 +73,15 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject resp = response.json;
                         String name;
                         String surname;
-                        int id;
                         try{
-                            id = resp.getJSONObject("response").getInt("id");
                             name = resp.getJSONObject("response").getString("first_name");
                             surname = resp.getJSONObject("response").getString("last_name");
                         }
                         catch (JSONException e){
                             name = "Имя";
                             surname = "Фамилия";
-                            id = -1;
                         }
-                        setupUserInfo(name, surname, id);
+                        setupUserInfo(name, surname, Integer.parseInt(userId));
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finishActivity(0);

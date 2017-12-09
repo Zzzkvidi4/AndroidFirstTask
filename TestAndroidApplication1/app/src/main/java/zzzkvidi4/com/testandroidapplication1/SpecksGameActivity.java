@@ -22,9 +22,6 @@ public class SpecksGameActivity extends AppCompatActivity {
     private boolean isFirst;
     private int id;
 
-    private TextView infoTextView;
-    LinearLayout gameWidgets;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,28 +31,9 @@ public class SpecksGameActivity extends AppCompatActivity {
         isFirst = intent.getBooleanExtra("isFirst", true);
         id = intent.getIntExtra("id", -1);
         setContentView(R.layout.activity_specks_game);
-        //infoTextView = (TextView)findViewById(R.id.infoTextView);
-        //infoTextView.append("Diff: " + difficulty + "; Score: " + score);
-
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        //gameWidgets = new LinearLayout(this);
-
         Button pauseBtn = (Button)findViewById(R.id.pauseGameBtn);
-        //pauseBtn.setText("Пауза");
-        //pauseBtn.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(this, R.drawable.button), null, null, null);
-        //pauseBtn.setBackground(Drawable.createFromPath("D:\\Projects\\AndroidFirstTask\\TestAndroidApplication1\\app\\src\\main\\res\\drawable\\button.xml"));
         pauseBtn.setOnClickListener(new PauseOnClickListener());
-
-        //gameWidgets.addView(pauseBtn);
-
-        //FrameLayout game = new FrameLayout(this);
-        //SurfaceView gameSurfaceHolderCallback = new GameSurfaceHolderCallback(this, 2, 3);
-
-        //game.addView(gameSurfaceHolderCallback);
-        //game.addView(gameWidgets);
         SurfaceView view = (SurfaceView)findViewById(R.id.gameSurfaceView);
         GameController controller = new CardFieldController(this, difficulty, getResources());
         GameSurfaceHolderCallback gameSurfaceHolderCallback = new GameSurfaceHolderCallback(view.getHolder(), controller);

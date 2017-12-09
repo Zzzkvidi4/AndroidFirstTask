@@ -48,7 +48,7 @@ public class DBOperations {
                 match.setDifficulty(cursor.getInt(colIndexDifficulty));
                 match.setIdUser(id_user);
                 match.setScore(cursor.getInt(colIndexScore));
-                gameMatches.add(match);
+                gameMatches.add(0, match);
                 --size;
             } while (size > 0 && cursor.moveToPrevious());
         }

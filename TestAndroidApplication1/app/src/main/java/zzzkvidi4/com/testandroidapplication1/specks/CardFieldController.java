@@ -31,6 +31,7 @@ public class CardFieldController implements GameController {
     private static final long SHOW_FINISH_SCREEN_DELAY = 2000;
     private static final long HIDE_FIELD_DELAY = 2000;
     private static final int HIDDEN_FACE_BITMAP_ID = 0;
+    private static final int MILLISECONDS_IN_SECOND = 1000;
     private static final int GAME_ID = 0;
     private CardField cardField;
     private int fieldWidth;
@@ -42,11 +43,11 @@ public class CardFieldController implements GameController {
     private int difficulty;
 
     public CardFieldController(Activity activity, int difficulty, Resources resources){
-        cardField = new CardField(fieldWidth, fieldHeight);
         this.difficulty = difficulty;
-        this.fieldHeight = CARD_FIELD_HEIGHT[difficulty];
-        this.fieldWidth = CARD_FIELD_WIDTH[difficulty];
+        fieldHeight = CARD_FIELD_HEIGHT[difficulty];
+        fieldWidth = CARD_FIELD_WIDTH[difficulty];
         Bitmaps = new Bitmap[fieldWidth * fieldHeight / 2 + 1];
+        cardField = new CardField(fieldWidth, fieldHeight);
         prepareBitmaps(resources);
         this.activity = activity;
     }
@@ -86,10 +87,10 @@ public class CardFieldController implements GameController {
         if (isTouchable) {
             cardField.checkOnTouch((int) event.getX(), (int) event.getY());
         }
-        if (cardField.gameFinished()){
+        if (cardField.gameFinished() && isTouchable){
             isTouchable = false;
             Long finishDate = Calendar.getInstance().getTime().getTime();
-            int score = MAX_SCORE / (int)(finishDate - startDate) - cardField.getMistakes();
+            int score = (MAX_SCORE / (int)((finishDate - startDate) / MILLISECONDS_IN_SECOND)) - cardField.getMistakes();
             Timer timer = new Timer();
             timer.schedule(new ShowFinalScoreTimerTask(score, difficulty), SHOW_FINISH_SCREEN_DELAY);
         }
