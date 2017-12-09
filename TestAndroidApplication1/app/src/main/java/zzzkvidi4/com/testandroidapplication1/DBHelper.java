@@ -21,13 +21,21 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "display_name text not null,"
                 + "description text not null,"
                 + "icon blob not null" + ");");
+        db.execSQL("create table user("
+                + "id_user integer primary key autoincrement, "
+                + "id_server_user integer not null, "
+                + "games_revision_date date not null, "
+                + "name text not null, "
+                + "surname text not null);");
         db.execSQL("create table game_match ("
                 + "id_game_match integer primary key autoincrement,"
-                + "id_game integer,"
-                + "display_name text not null,"
-                + "description text not null,"
-                + "icon blob not null,"
-                + " foreign key (id_game) references game (id_game));");
+                + " id_game integer not null,"
+                + " id_user integer not null,"
+                + " score integer not null,"
+                + " difficulty integer not null,"
+                + " date date not null,"
+                + " foreign key (id_game) references game (id_game),"
+                + " foreign key (id_user) references user (id_user));");
     }
 
     @Override
