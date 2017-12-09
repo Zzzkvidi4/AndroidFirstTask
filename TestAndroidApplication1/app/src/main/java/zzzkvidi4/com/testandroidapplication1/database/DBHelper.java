@@ -1,4 +1,4 @@
-package zzzkvidi4.com.testandroidapplication1;
+package zzzkvidi4.com.testandroidapplication1.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + " id_user integer not null,"
                 + " score integer not null,"
                 + " difficulty integer not null,"
-                + " date date not null,"
+                + " date integer not null,"
                 + " foreign key (id_game) references game (id_game),"
                 + " foreign key (id_user) references user (id_user));");
     }

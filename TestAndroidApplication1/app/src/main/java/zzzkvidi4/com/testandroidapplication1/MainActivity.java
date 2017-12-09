@@ -13,6 +13,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.vk.sdk.VKSdk;
 
+import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
+
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "Custom error: ";
     private SharedPreferences preferences;

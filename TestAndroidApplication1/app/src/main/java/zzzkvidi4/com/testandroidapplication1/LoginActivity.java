@@ -1,6 +1,5 @@
 package zzzkvidi4.com.testandroidapplication1;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +20,8 @@ import com.vk.sdk.api.VKResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences preferences;
@@ -62,7 +63,8 @@ public class LoginActivity extends AppCompatActivity {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-
+                String token = res.accessToken;
+                String provider = "vk";
                 VKRequest request = new VKRequest("account.getProfileInfo");
                 request.executeWithListener(new VKRequest.VKRequestListener() {
                     @Override
