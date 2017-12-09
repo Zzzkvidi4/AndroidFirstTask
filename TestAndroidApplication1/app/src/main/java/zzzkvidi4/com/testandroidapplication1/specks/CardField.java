@@ -26,6 +26,7 @@ public class CardField {
     private int state;
     private int openedCards;
     private boolean isTouchable = true;
+    private int mistakes = 0;
 
     public CardGameObject[][] getCardField(){
         return cardField;
@@ -46,6 +47,10 @@ public class CardField {
 
     public int getCardHeight(int canvasHeight){
         return (canvasHeight - (fieldHeight - 1) * CARDS_DISTANCE) / (fieldHeight);
+    }
+
+    public int getMistakes() {
+        return mistakes;
     }
 
     public void initialize(int canvasWidth, int canvasHeight) {
@@ -115,6 +120,7 @@ public class CardField {
                     state = STATE_NO_SELECTED_CARDS;
                     firstCard = null;
                 } else {
+                    ++mistakes;
                     isTouchable = false;
                     Timer timer = new Timer();
                     timer.schedule(new HideWrongCards(), 2000);

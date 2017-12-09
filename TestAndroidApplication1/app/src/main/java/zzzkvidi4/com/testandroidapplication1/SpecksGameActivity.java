@@ -57,7 +57,7 @@ public class SpecksGameActivity extends AppCompatActivity {
         //game.addView(gameSurfaceHolderCallback);
         //game.addView(gameWidgets);
         SurfaceView view = (SurfaceView)findViewById(R.id.gameSurfaceView);
-        GameController controller = new CardFieldController(this, 2, 3, getResources());
+        GameController controller = new CardFieldController(this, difficulty, getResources());
         GameSurfaceHolderCallback gameSurfaceHolderCallback = new GameSurfaceHolderCallback(view.getHolder(), controller);
         view.getHolder().addCallback(gameSurfaceHolderCallback);
         view.setOnTouchListener(new CardsOnTouchListener(controller));
