@@ -19,7 +19,8 @@
     <string name="back_to_menu_btn_text">В меню</string>
     <string name="back_to_game_btn_text">Назад</string>
     <string name="pause_btn_text">Пауза</string>
-    <string name="no_token"></string>
+    <string name="no_token" />
+    <string name="vk_btn_title">VK</string>
     <integer name="no_user_id">-1</integer>
     <integer name="no_matches">-1</integer>
 

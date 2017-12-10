@@ -42,31 +42,22 @@ public class MainActivity extends AppCompatActivity {
         selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
         Button logoutBtn = (Button)findViewById(R.id.logoutBtn);
         logoutBtn.setOnClickListener(new LogOutOnClickListener());
-        if (!VKSdk.isLoggedIn()) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            uploadUserInfo();
-        }
-        setupGamesInfo();
+        uploadUserInfo();
         dbHelper = new DBHelper(this);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        uploadUserInfo();
     }
 
     public void uploadUserInfo(){
         preferences = getSharedPreferences("user_info", MODE_PRIVATE);
-        int id = preferences.getInt("id", -1);
+        int id = preferences.getInt("id", getResources().getInteger(R.integer.no_user_id));
         DBOperations op = new DBOperations(new DBHelper(this));
         String userName = op.getUserFIOString(id);
         infoTextView.setText(userName);
-    }
-
-    public void setupGamesInfo(){
-        preferences = getSharedPreferences("game_info0", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("name", "Парные карты");
-        editor.putString("description", "Открывайте одинаковые карты парами,\nпока они не закончатся!");
-        editor.apply();
     }
 
     private class SelectGameItemClickListener implements AdapterView.OnItemClickListener{
@@ -86,9 +77,6 @@ public class MainActivity extends AppCompatActivity {
             editor.clear();
             editor.apply();
             VKSdk.logout();
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
         }
     }
 }
