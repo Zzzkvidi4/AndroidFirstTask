@@ -32,7 +32,7 @@ public class CardFieldController implements GameController {
     private static final long HIDE_FIELD_DELAY = 2000;
     private static final int HIDDEN_FACE_BITMAP_ID = 0;
     private static final int MILLISECONDS_IN_SECOND = 1000;
-    private static final int GAME_ID = 0;
+    private static final int GAME_ID = 1;
     private CardField cardField;
     private int fieldWidth;
     private int fieldHeight;

@@ -60,7 +60,7 @@ public class GameFinishedActivity extends AppCompatActivity {
                 MindBlowerAPI mindBlowerAPI = new Retrofit.Builder()
                         .addConverterFactory(GsonConverterFactory.create())
                         .baseUrl(MindBlowerAPI.MIND_BLOWER_SERVER_URL).build().create(MindBlowerAPI.class);
-                mindBlowerAPI.postGameResult(id + 1, difficulty, gameScore, "Token " + token).enqueue(new Callback<TopResults>() {
+                mindBlowerAPI.postGameResult(id, difficulty, gameScore, "Token " + token).enqueue(new Callback<TopResults>() {
                     @Override
                     public void onResponse(Call<TopResults> call, Response<TopResults> response) {
 

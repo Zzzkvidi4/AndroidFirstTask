@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         GameActivityFactory gameActivityFactory = GameActivityFactory.getInstance();
         try {
-            gameActivityFactory.registerConstructor(0, SpecksGameActivity.class);
+            gameActivityFactory.registerConstructor(1, SpecksGameActivity.class);
         }
         catch (NoSuchMethodException e){
             Log.d(LOG_TAG, "error in factory!");
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Intent intent = new Intent(MainActivity.this, GameOptionActivity.class);
-            intent.putExtra("id", l + 1);
+            intent.putExtra("id", l);
             startActivity(intent);
         }
     }
