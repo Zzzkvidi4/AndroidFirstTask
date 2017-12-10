@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.view.MotionEvent;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import zzzkvidi4.com.testandroidapplication1.GameFinishedActivity;
+import zzzkvidi4.com.testandroidapplication1.R;
 import zzzkvidi4.com.testandroidapplication1.gameEngine.GameController;
 
 /**
@@ -25,7 +27,10 @@ public class GameFieldController  implements GameController {
     private int difficulty;
 
     public GameFieldController(Activity activity, int fieldWidth, int fieldHeight, int difficulty){
-        gameField = new GameField(fieldWidth, fieldHeight);
+        int winColor = ContextCompat.getColor(activity, R.color.WinColor);
+        int mainColor = ContextCompat.getColor(activity, R.color.mainFontColor);
+        int loseColor = ContextCompat.getColor(activity, R.color.LoseColor);
+        gameField = new GameField(fieldWidth, fieldHeight, winColor, mainColor, loseColor);
         this.fieldHeight = fieldHeight;
         this.fieldWidth = fieldWidth;
         this.activity = activity;

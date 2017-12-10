@@ -1,6 +1,7 @@
 package zzzkvidi4.com.testandroidapplication1.seqRepeater;
 
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 
 import java.lang.reflect.Field;
 import java.util.Random;
@@ -16,9 +17,9 @@ import zzzkvidi4.com.testandroidapplication1.R;
 public class GameField {
     private static final int ELEMS_DISTANCE = 30;
     private static final int SHUFFLE_STEPS = 50;
-    private static final int WINCOLOR = Color.GREEN;
-    private static final int LOSECOLOR = Color.RED;
-    private static final int MAINCOLOR = Color.BLUE;
+    private int winColor;
+    private int mainColor;
+    private int loseColor;
     public static final int ONE_CARD_DELAY = 1000;
     private int fieldWidth;
     private int fieldHeight;
@@ -31,12 +32,14 @@ public class GameField {
     private boolean islosed;
 
 
-    public GameField(int fieldWidth, int fieldHeight) {
+    public GameField(int fieldWidth, int fieldHeight, int winColor, int mainColor, int loseColor) {
         this.fieldWidth = fieldWidth;
         this.fieldHeight = fieldHeight;
         this.field = new SeqRepeaterGameObject[fieldHeight][fieldWidth];
         this.winSeq = new int[fieldHeight*fieldWidth];
-
+        this.winColor = winColor;
+        this.mainColor = mainColor;
+        this.loseColor = loseColor;
     }
 
     public SeqRepeaterGameObject[][] getField() {return field;}
@@ -72,7 +75,7 @@ public class GameField {
         }
         for(int i = 0; i < fieldHeight; ++i){
             for (int j = 0; j < fieldWidth; ++j){
-                SeqRepeaterGameObject elem = new SeqRepeaterGameObject(i*fieldWidth+j, j * (elemWidth + ELEMS_DISTANCE)+ELEMS_DISTANCE, i * (elemHeight + ELEMS_DISTANCE)+ELEMS_DISTANCE, MAINCOLOR);
+                SeqRepeaterGameObject elem = new SeqRepeaterGameObject(i*fieldWidth+j, j * (elemWidth + ELEMS_DISTANCE)+ELEMS_DISTANCE, i * (elemHeight + ELEMS_DISTANCE)+ELEMS_DISTANCE, mainColor);
                 field[i][j] = elem;
             }
         }
@@ -94,13 +97,13 @@ public class GameField {
                 ++column;
             }
             if ((x >= 0) && (row >= 0)) {
-                if (field[row][column].getColor() != WINCOLOR) {
+                if (field[row][column].getColor() != winColor) {
                     if (field[row][column].getId() == winSeq[guessedCount]) {
-                        field[row][column].setColor(WINCOLOR);
+                        field[row][column].setColor(winColor);
                         ++guessedCount;
                         this.islosed = false;
                     } else {
-                        field[row][column].setColor(LOSECOLOR);
+                        field[row][column].setColor(loseColor);
                         this.islosed = true;
                     }
                 }
@@ -134,7 +137,7 @@ public class GameField {
 
         @Override
         public void run() {
-            field[x][y].setColor(WINCOLOR);
+            field[x][y].setColor(winColor);
         }
     }
 
@@ -149,7 +152,7 @@ public class GameField {
 
         @Override
         public void run() {
-            field[x][y].setColor(MAINCOLOR);
+            field[x][y].setColor(mainColor);
             isTouchable = true;
         }
     }
