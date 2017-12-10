@@ -2,12 +2,9 @@ package zzzkvidi4.com.testandroidapplication1.seqRepeater;
 
 import android.graphics.Color;
 
-import java.lang.reflect.Field;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import zzzkvidi4.com.testandroidapplication1.R;
 
 /**
  * Created by Red Sky on 08.12.2017.
@@ -26,7 +23,7 @@ public class GameField {
     private int elemHeight;
     private SeqRepeaterGameObject[][] field;
     private int[] winSeq;
-    private int guessedcount;
+    private int guessedCount;
     private boolean isTouchable = true;
 
     private boolean islosed;
@@ -42,6 +39,10 @@ public class GameField {
 
     public SeqRepeaterGameObject[][] getField() {return field;}
 
+    public int getGuessedCount(){
+        return guessedCount;
+    }
+
     public int getElemWidth(int canvasWidth) {
         return (canvasWidth - (fieldWidth + 1) * ELEMS_DISTANCE) / (fieldWidth);
     }
@@ -51,7 +52,7 @@ public class GameField {
 
     public void initialize(int canvasWidth, int canvasHeight){
         this.islosed = false;
-        guessedcount = 0;
+        guessedCount = 0;
         elemWidth = getElemWidth(canvasWidth);
         elemHeight = getElemHeight(canvasHeight);
         int elementCount = fieldWidth * fieldHeight;
@@ -92,9 +93,9 @@ public class GameField {
             }
             if ((x >= 0) && (row >= 0)) {
                 if (field[row][column].getColor() != WINCOLOR) {
-                    if (field[row][column].getId() == winSeq[guessedcount]) {
+                    if (field[row][column].getId() == winSeq[guessedCount]) {
                         field[row][column].setColor(WINCOLOR);
-                        ++guessedcount;
+                        ++guessedCount;
                         this.islosed = false;
                     } else {
                         field[row][column].setColor(LOSECOLOR);
@@ -107,7 +108,7 @@ public class GameField {
     }
 
     public boolean gameFinished(){
-        return fieldWidth*fieldHeight == guessedcount || islosed;
+        return fieldWidth*fieldHeight == guessedCount || islosed;
     }
 
     public void showWin(){

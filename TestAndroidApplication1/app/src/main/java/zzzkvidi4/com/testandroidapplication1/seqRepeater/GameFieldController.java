@@ -23,12 +23,14 @@ public class GameFieldController  implements GameController {
     private int fieldHeight;
     private boolean isTouchable = false;
     private Activity activity;
+    private int difficulty;
 
-    public GameFieldController(Activity activity, int fieldWidth, int fieldHeight){
+    public GameFieldController(Activity activity, int fieldWidth, int fieldHeight, int difficulty){
         gameField = new GameField(fieldWidth, fieldHeight);
         this.fieldHeight = fieldHeight;
         this.fieldWidth = fieldWidth;
         this.activity = activity;
+        this.difficulty = difficulty;
     }
 
     @Override
@@ -92,6 +94,9 @@ public class GameFieldController  implements GameController {
         @Override
         public void run() {
             Intent intent = new Intent(activity, GameFinishedActivity.class);
+            intent.putExtra("score", gameField.getGuessedCount());
+            intent.putExtra("id", 1);
+            intent.putExtra("difficulty", difficulty);
             activity.finish();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(intent);

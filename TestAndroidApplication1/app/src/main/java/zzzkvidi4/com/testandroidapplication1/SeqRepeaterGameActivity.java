@@ -40,7 +40,7 @@ public class SeqRepeaterGameActivity extends AppCompatActivity {
         pauseBtn.setOnClickListener(new PauseOnClickListener());
 
         SurfaceView view = (SurfaceView)findViewById(R.id.gameSurfaceView);
-        GameController controller = new GameFieldController(this, 2, 3);
+        GameController controller = new GameFieldController(this, 2, 3, difficulty);
         GameSurfaceHolderCallback gameSurfaceHolderCallback = new GameSurfaceHolderCallback(view.getHolder(), controller);
         view.getHolder().addCallback(gameSurfaceHolderCallback);
         view.setOnTouchListener(new CardsOnTouchListener(controller));
