@@ -1,78 +1,85 @@
 package zzzkvidi4.com.testandroidapplication1;
 
 import android.content.Intent;
-import android.os.Message;
-import android.provider.Settings;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
 
-import org.json.JSONObject;
+import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
+import zzzkvidi4.com.testandroidapplication1.database.DBOperations;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String LOG_TAG = "Custom error: ";
     private TextView infoTextView;
-    private TextView resultMsg;
+    private Button logoutBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        infoTextView = (TextView)findViewById(R.id.infoTextView);
-        resultMsg = (TextView)findViewById(R.id.resultMsg);
-        if (!VKSdk.isLoggedIn()) {
-            VKSdk.login(this, "friends,photos");
-        } else {
-            uploadUserInfo();
+        GameActivityFactory gameActivityFactory = GameActivityFactory.getInstance();
+        try {
+            gameActivityFactory.registerConstructor(1, SpecksGameActivity.class);
         }
-
-    }
-
-    public void uploadUserInfo(){
-        infoTextView.setText("Success!");
-        VKRequest request = new VKRequest("account.getProfileInfo");
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                JSONObject resp = response.json;
-                infoTextView.setText(resp.toString());
-                resultMsg.setText("Success result!");
-            }
-
-            @Override
-            public void onError(VKError error) {
-                resultMsg.setText("Insuccess result!");
-            }
-
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                resultMsg.setText("Something strange");
-            }
-        });
+        catch (NoSuchMethodException e){
+            Log.d(LOG_TAG, "error in factory!");
+        }
+        infoTextView = (TextView)findViewById(R.id.infoTextView);
+        ListView selectGameListView = (ListView)findViewById(R.id.selectGameListView);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты"});
+        selectGameListView.setAdapter(arrayAdapter);
+        selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
+        logoutBtn = (Button)findViewById(R.id.logoutBtn);
+        logoutBtn.setOnClickListener(new LogOutOnClickListener());
+        uploadUserInfo();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-                infoTextView.clearComposingText();
-                uploadUserInfo();
-            }
+    protected void onRestart() {
+        super.onRestart();
+        uploadUserInfo();
+    }
 
-            @Override
-            public void onError(VKError error) {
-                infoTextView.clearComposingText();
-                infoTextView.setText("Error!");
-            }
-        }));
+    public void uploadUserInfo(){
+        SharedPreferences preferences = getSharedPreferences("user_info", MODE_PRIVATE);
+        int id = preferences.getInt("id", getResources().getInteger(R.integer.no_user_id));
+        if (id == getResources().getInteger(R.integer.no_user_id)){
+            logoutBtn.setVisibility(View.INVISIBLE);
+        }
+        DBOperations op = new DBOperations(new DBHelper(this));
+        String userName = op.getUserFIOString(id);
+        infoTextView.setText(userName);
+    }
+
+    private class SelectGameItemClickListener implements AdapterView.OnItemClickListener{
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Intent intent = new Intent(MainActivity.this, GameOptionActivity.class);
+            intent.putExtra("id", l);
+            startActivity(intent);
+        }
+    }
+
+    private class LogOutOnClickListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+            SharedPreferences.Editor editor = getSharedPreferences("user_info", MODE_PRIVATE).edit();
+            editor.clear();
+            editor.apply();
+            VKSdk.logout();
+            Toast.makeText(MainActivity.this, "Вы успешно разлогинились!", Toast.LENGTH_LONG).show();
+            uploadUserInfo();
+        }
     }
 }

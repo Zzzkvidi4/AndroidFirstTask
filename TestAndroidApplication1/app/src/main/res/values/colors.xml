@@ -2,5 +2,11 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="colorForElem">#9bc1e4</color>
+    <color name="mainTheme">#d7e8ef</color>
+    <color name="mainFontColor">#001b42</color>
+    <color name="centerGradColor">#4db4c7</color>
 </resources>

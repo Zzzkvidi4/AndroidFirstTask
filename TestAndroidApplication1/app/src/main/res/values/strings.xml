@@ -1,4 +1,27 @@
 <resources>
-    <string name="app_name">TestAndroidApplication1</string>
-    <integer name="com_vk_sdk_AppId">6229699</integer>
+    <string name="app_name">Mind Blower</string>
+    <integer name="com_vk_sdk_AppId">6214742</integer>
+
+    <string name="title_activity_second">SecondActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_game_option">GameOptionActivity</string>
+    <string name="startGameBtnText">Start!</string>
+    <string name="difficultyString">Difficulty</string>
+    <string name="authorizeString">Authorize</string>
+    <string name="log_out_btn_text">Logout</string>
+    <string name="authorizeStringRU">Авторизоваться</string>
+    <string name="log_out_btn_text_rus">Выйти</string>
+    <string name="difficultyString_rus">Сложность</string>
+    <string name="startGameBtnTextRus">Старт!</string>
+    <string name="try_again_btn_text">Попробовать снова</string>
+    <string name="back_to_menu_btn_text">В меню</string>
+    <string name="back_to_game_btn_text">Назад</string>
+    <string name="pause_btn_text">Пауза</string>
+    <string name="no_token" />
+    <string name="vk_btn_title">VK</string>
+    <integer name="no_user_id">-1</integer>
+    <integer name="no_matches">-1</integer>
+
 </resources>
