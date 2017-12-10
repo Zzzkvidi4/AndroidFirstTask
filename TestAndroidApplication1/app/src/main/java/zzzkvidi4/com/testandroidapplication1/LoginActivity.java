@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
@@ -21,7 +22,15 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
+import zzzkvidi4.com.testandroidapplication1.syncronization.User;
+import zzzkvidi4.com.testandroidapplication1.syncronization.MindBlowerAPI;
+import zzzkvidi4.com.testandroidapplication1.syncronization.UserInfo;
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences preferences;
@@ -64,7 +73,37 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResult(VKAccessToken res) {
                 String token = res.accessToken;
+                String email = res.email;
                 String provider = "vk";
+                //new AsyncAuthorize(token, email).execute();
+                MindBlowerAPI mindBlowerAPI = new Retrofit.Builder()
+                        .baseUrl(MindBlowerAPI.MIND_BLOWER_SERVER_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(MindBlowerAPI.class);
+                UserInfo info = new UserInfo();
+                info.setEmail(email);
+                info.setProvider("vk");
+                info.setVk_token(token);
+                try{
+                    mindBlowerAPI.getUserToken(info).enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            if (response.body() != null){
+                                preferences = getSharedPreferences("user_info", MODE_PRIVATE);
+                                preferences.edit().putString("token", response.body().getToken()).apply();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+
+                        }
+                    });
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
                 final String userId = res.userId;
                 VKRequest request = new VKRequest("account.getProfileInfo");
                 request.executeWithListener(new VKRequest.VKRequestListener() {
@@ -113,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            VKSdk.login(LoginActivity.this, "");
+            VKSdk.login(LoginActivity.this, VKScope.EMAIL);
         }
     }
 }
