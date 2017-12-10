@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.util.VKUtil;
 
 import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
 import zzzkvidi4.com.testandroidapplication1.database.DBOperations;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
         setContentView(R.layout.activity_main);
         GameActivityFactory gameActivityFactory = GameActivityFactory.getInstance();
         try {
