@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -26,6 +27,7 @@ import zzzkvidi4.com.testandroidapplication1.onClickListeners.BackToMenuOnClickL
 import zzzkvidi4.com.testandroidapplication1.onClickListeners.StartGameOnClickListener;
 import zzzkvidi4.com.testandroidapplication1.syncronization.GameScore;
 import zzzkvidi4.com.testandroidapplication1.syncronization.MindBlowerAPI;
+import zzzkvidi4.com.testandroidapplication1.syncronization.TopResults;
 
 public class GameFinishedActivity extends AppCompatActivity {
     private final static int MATCHES_TO_SHOW_COUNT = 10;
@@ -61,15 +63,15 @@ public class GameFinishedActivity extends AppCompatActivity {
                 MindBlowerAPI mindBlowerAPI = new Retrofit.Builder()
                         .addConverterFactory(GsonConverterFactory.create())
                         .baseUrl(MindBlowerAPI.MIND_BLOWER_SERVER_URL).build().create(MindBlowerAPI.class);
-                mindBlowerAPI.postGameResult(gameScore, "Token " + token).enqueue(new Callback() {
+                mindBlowerAPI.postGameResult(id + 1, difficulty, gameScore, "Token " + token).enqueue(new Callback<TopResults>() {
                     @Override
-                    public void onResponse(Call call, Response response) {
+                    public void onResponse(Call<TopResults> call, Response<TopResults> response) {
 
                     }
 
                     @Override
-                    public void onFailure(Call call, Throwable t) {
-
+                    public void onFailure(Call<TopResults> call, Throwable t) {
+                        Toast.makeText(GameFinishedActivity.this, "Соединение с сервером недоступно.", Toast.LENGTH_LONG).show();
                     }
                 });
             }

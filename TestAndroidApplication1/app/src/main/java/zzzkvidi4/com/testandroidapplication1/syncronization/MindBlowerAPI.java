@@ -13,7 +13,7 @@ import retrofit2.http.Path;
  */
 
 public interface MindBlowerAPI {
-    public final static String MIND_BLOWER_SERVER_URL = "https://mind-blower.herokuapp.com";
+    String MIND_BLOWER_SERVER_URL = "https://mind-blower.herokuapp.com";
 
     @POST("token/obtain/")
     Call<User> getUserToken(@Body UserInfo userInfo);
@@ -21,6 +21,6 @@ public interface MindBlowerAPI {
     @GET("score/{game_id}/{difficulty_id}/")
     Call<TopResults> getTopResults(@Path("game_id") int game_id, @Path("difficulty_id") int difficulty_id, @Header("Authorization") String auth);
 
-    @POST("score/")
-    Call<TopResults> postGameResult(@Body GameScore score, @Header("Authorization") String auth);
+    @POST("score/{game_id}/{difficulty_id}/")
+    Call<TopResults> postGameResult(@Path("game_id") int game_id, @Path("difficulty_id") int difficulty_id, @Body GameScore score, @Header("Authorization") String auth);
 }

@@ -10,6 +10,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ import zzzkvidi4.com.testandroidapplication1.syncronization.TopResults;
 import zzzkvidi4.com.testandroidapplication1.syncronization.TopUser;
 
 public class GameOptionActivity extends AppCompatActivity {
+    private static final int DEFAULT_DIFFICULTY = 1;
     private long id;
     private int userId;
     private String name;
@@ -37,6 +39,8 @@ public class GameOptionActivity extends AppCompatActivity {
     private int maxScore;
     private SharedPreferences preferences;
     private ListView top10ListView;
+    private Button startBtn;
+    private SeekBar difficultySeekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +49,13 @@ public class GameOptionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = (int) intent.getLongExtra("id", 0);
         retrieveStaticInformationAboutGame();
-        SeekBar difficultySeekBar = (SeekBar) findViewById(R.id.difficultySeekBar);
-        difficultySeekBar.setMax(maxDifficulty);
+        retrieveDynamicInformationAboutGame(DEFAULT_DIFFICULTY);
+        difficultySeekBar = (SeekBar) findViewById(R.id.difficultySeekBar);
+        difficultySeekBar.setMax(maxDifficulty - 1);
+        difficultySeekBar.invalidate();
         difficultySeekBar.setOnSeekBarChangeListener(new OnDifficultySeekBarChanged());
-        Button startBtn = (Button) findViewById(R.id.startBtn);
-        startBtn.setOnClickListener(new StartGameOnClickListener((int)id - 1, difficultySeekBar.getProgress(), 0, false, this, true));
+        startBtn = (Button) findViewById(R.id.startBtn);
+        startBtn.setOnClickListener(new StartGameOnClickListener((int)id - 1, difficultySeekBar.getProgress() + 1, 0, false, this, true));
         TextView gameNameTextView = (TextView)findViewById(R.id.gameNameTextView);
         gameNameTextView.setText(name);
         TextView gameDescriptionTextView = (TextView)findViewById(R.id.gameDescriptionTextView);
@@ -98,7 +104,7 @@ public class GameOptionActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<TopResults> call, Throwable t) {
-
+                Toast.makeText(GameOptionActivity.this, "Соединение с сервером недоступно.", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -117,6 +123,7 @@ public class GameOptionActivity extends AppCompatActivity {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+            startBtn.setOnClickListener(new StartGameOnClickListener((int)id - 1, difficultySeekBar.getProgress() + 1, 0, false, GameOptionActivity.this, true));
             int difficulty = seekBar.getProgress();
             retrieveDynamicInformationAboutGame(difficulty);
         }
