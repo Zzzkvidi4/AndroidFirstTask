@@ -33,9 +33,6 @@ public class GameFinishedActivity extends AppCompatActivity {
     private final static int MATCHES_TO_SHOW_COUNT = 10;
     private final static int NO_USER_ID = -1;
     private final static String NO_TOKEN = "";
-    private int difficulty;
-    private int id;
-    private int score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +45,16 @@ public class GameFinishedActivity extends AppCompatActivity {
 
     public void uploadInfo(Intent intent){
         SharedPreferences preferences = getSharedPreferences("user_info", MODE_PRIVATE);
-        int userId = preferences.getInt("id", NO_USER_ID);
-        String token = preferences.getString("token", NO_TOKEN);
-        difficulty = intent.getIntExtra("difficulty", 0);
-        id = intent.getIntExtra("id", 0);
-        score = intent.getIntExtra("score", 0);
-        if (userId != NO_USER_ID){
+        int userId = preferences.getInt("id", getResources().getInteger(R.integer.no_user_id));
+        String token = preferences.getString("token", getResources().getString(R.string.no_token));
+        int difficulty = intent.getIntExtra("difficulty", 0);
+        int id = intent.getIntExtra("id", 0);
+        int score = intent.getIntExtra("score", 0);
+        if (userId != getResources().getInteger(R.integer.no_user_id)){
             DBOperations operations = new DBOperations(new DBHelper(this));
             operations.addGameScore(id, score, difficulty, userId);
             int maxScore = operations.getMaxScore(userId, id, difficulty);
-            if (!token.equals(NO_TOKEN)){
+            if (!token.equals(getResources().getString(R.string.no_token))){
                 GameScore gameScore = new GameScore();
                 gameScore.setScore(maxScore);
                 MindBlowerAPI mindBlowerAPI = new Retrofit.Builder()

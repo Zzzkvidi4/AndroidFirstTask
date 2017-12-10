@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.vk.sdk.VKSdk;
 
 import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
@@ -18,17 +20,14 @@ import zzzkvidi4.com.testandroidapplication1.database.DBOperations;
 
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "Custom error: ";
-    private SharedPreferences preferences;
     private TextView infoTextView;
-    private ListView selectGameListView;
-    private GameActivityFactory gameActivityFactory;
-    private DBHelper dbHelper;
+    private Button logoutBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        gameActivityFactory = GameActivityFactory.getInstance();
+        GameActivityFactory gameActivityFactory = GameActivityFactory.getInstance();
         try {
             gameActivityFactory.registerConstructor(0, SpecksGameActivity.class);
         }
@@ -36,14 +35,13 @@ public class MainActivity extends AppCompatActivity {
             Log.d(LOG_TAG, "error in factory!");
         }
         infoTextView = (TextView)findViewById(R.id.infoTextView);
-        selectGameListView = (ListView)findViewById(R.id.selectGameListView);
+        ListView selectGameListView = (ListView)findViewById(R.id.selectGameListView);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты"});
         selectGameListView.setAdapter(arrayAdapter);
         selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
-        Button logoutBtn = (Button)findViewById(R.id.logoutBtn);
+        logoutBtn = (Button)findViewById(R.id.logoutBtn);
         logoutBtn.setOnClickListener(new LogOutOnClickListener());
         uploadUserInfo();
-        dbHelper = new DBHelper(this);
     }
 
     @Override
@@ -53,8 +51,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void uploadUserInfo(){
-        preferences = getSharedPreferences("user_info", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("user_info", MODE_PRIVATE);
         int id = preferences.getInt("id", getResources().getInteger(R.integer.no_user_id));
+        if (id == getResources().getInteger(R.integer.no_user_id)){
+            logoutBtn.setVisibility(View.INVISIBLE);
+        }
         DBOperations op = new DBOperations(new DBHelper(this));
         String userName = op.getUserFIOString(id);
         infoTextView.setText(userName);
@@ -77,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
             editor.clear();
             editor.apply();
             VKSdk.logout();
+            Toast.makeText(MainActivity.this, "Вы успешно разлогинились!", Toast.LENGTH_LONG).show();
+            uploadUserInfo();
         }
     }
 }
