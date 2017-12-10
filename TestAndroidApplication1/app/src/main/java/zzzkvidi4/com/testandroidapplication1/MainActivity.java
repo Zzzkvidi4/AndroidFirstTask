@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.vk.sdk.VKSdk;
 
 import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
@@ -20,29 +19,37 @@ import zzzkvidi4.com.testandroidapplication1.database.DBOperations;
 
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "Custom error: ";
+    private SharedPreferences preferences;
     private TextView infoTextView;
+    private ListView selectGameListView;
+    private GameActivityFactory gameActivityFactory;
     private Button logoutBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        gameActivityFactory = GameActivityFactory.getInstance();
         GameActivityFactory gameActivityFactory = GameActivityFactory.getInstance();
         try {
             gameActivityFactory.registerConstructor(1, SpecksGameActivity.class);
+            gameActivityFactory.registerConstructor(1, SeqRepeaterGameActivity.class);
         }
         catch (NoSuchMethodException e){
             Log.d(LOG_TAG, "error in factory!");
         }
         infoTextView = (TextView)findViewById(R.id.infoTextView);
+        selectGameListView = (ListView)findViewById(R.id.selectGameListView);
         ListView selectGameListView = (ListView)findViewById(R.id.selectGameListView);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты"});
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты", "Повтори за мной"});
         selectGameListView.setAdapter(arrayAdapter);
         selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
         logoutBtn = (Button)findViewById(R.id.logoutBtn);
         logoutBtn.setOnClickListener(new LogOutOnClickListener());
+
         uploadUserInfo();
     }
+
 
     @Override
     protected void onRestart() {
