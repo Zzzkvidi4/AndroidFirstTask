@@ -21,25 +21,21 @@ public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "Custom error: ";
     private SharedPreferences preferences;
     private TextView infoTextView;
-    private ListView selectGameListView;
-    private GameActivityFactory gameActivityFactory;
     private Button logoutBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        gameActivityFactory = GameActivityFactory.getInstance();
         GameActivityFactory gameActivityFactory = GameActivityFactory.getInstance();
         try {
             gameActivityFactory.registerConstructor(1, SpecksGameActivity.class);
-            gameActivityFactory.registerConstructor(1, SeqRepeaterGameActivity.class);
+            gameActivityFactory.registerConstructor(2, SeqRepeaterGameActivity.class);
         }
         catch (NoSuchMethodException e){
             Log.d(LOG_TAG, "error in factory!");
         }
         infoTextView = (TextView)findViewById(R.id.infoTextView);
-        selectGameListView = (ListView)findViewById(R.id.selectGameListView);
         ListView selectGameListView = (ListView)findViewById(R.id.selectGameListView);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты", "Повтори за мной"});
         selectGameListView.setAdapter(arrayAdapter);
@@ -72,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Intent intent = new Intent(MainActivity.this, GameOptionActivity.class);
-            intent.putExtra("id", l);
+            intent.putExtra("id", l + 1);
             startActivity(intent);
         }
     }
