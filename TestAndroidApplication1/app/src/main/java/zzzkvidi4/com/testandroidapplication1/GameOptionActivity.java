@@ -198,7 +198,7 @@ public class GameOptionActivity extends AppCompatActivity {
                 preferences.edit().putString("token", response.body().getToken()).apply();
                 GameOptionActivity.this.token = response.body().getToken();
                 authBtn.setVisibility(View.INVISIBLE);
-                retrieveDynamicInformationAboutGame(difficultySeekBar.getProgress());
+                retrieveDynamicInformationAboutGame(difficultySeekBar.getProgress() + 1);
             }
         }
 
@@ -258,7 +258,7 @@ public class GameOptionActivity extends AppCompatActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             startBtn.setOnClickListener(new StartGameOnClickListener((int)id - 1, difficultySeekBar.getProgress() + 1, 0, false, GameOptionActivity.this, true));
-            int difficulty = seekBar.getProgress();
+            int difficulty = seekBar.getProgress() + 1;
             retrieveDynamicInformationAboutGame(difficulty);
         }
     }
