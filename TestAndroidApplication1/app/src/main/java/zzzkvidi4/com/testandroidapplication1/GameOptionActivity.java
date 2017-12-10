@@ -47,7 +47,7 @@ import zzzkvidi4.com.testandroidapplication1.syncronization.UserInfo;
 
 public class GameOptionActivity extends AppCompatActivity {
     private static final int DEFAULT_DIFFICULTY = 1;
-    private long id;
+    private int id;
     private int userId;
     private String name;
     private String description;
@@ -65,7 +65,7 @@ public class GameOptionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_option);
         Intent intent = getIntent();
-        id = (int) intent.getLongExtra("id", 0);
+        id = intent.getIntExtra("id", 0);
         authBtn = (Button)findViewById(R.id.authorizeBtn);
         authBtn.setVisibility(View.INVISIBLE);
         authBtn.setOnClickListener(new TryAgainUploadInfoListener());
@@ -77,7 +77,7 @@ public class GameOptionActivity extends AppCompatActivity {
         difficultySeekBar.invalidate();
         difficultySeekBar.setOnSeekBarChangeListener(new OnDifficultySeekBarChanged());
         startBtn = (Button) findViewById(R.id.startBtn);
-        startBtn.setOnClickListener(new StartGameOnClickListener((int)id - 1, difficultySeekBar.getProgress() + 1, 0, false, this, true));
+        startBtn.setOnClickListener(new StartGameOnClickListener(id, difficultySeekBar.getProgress() + 1, 0, false, this, true));
         TextView gameNameTextView = (TextView)findViewById(R.id.gameNameTextView);
         gameNameTextView.setText(name);
         TextView gameDescriptionTextView = (TextView)findViewById(R.id.gameDescriptionTextView);
@@ -90,7 +90,7 @@ public class GameOptionActivity extends AppCompatActivity {
         userId = preferences.getInt("id", getResources().getInteger(R.integer.no_user_id));
         token = preferences.getString("token", getResources().getString(R.string.no_token));
         DBOperations op = new DBOperations(new DBHelper(this));
-        GameInfo gameInfo = op.getGameInfo((int)id);
+        GameInfo gameInfo = op.getGameInfo(id);
         if (gameInfo == null) {
             finish();
             return;
@@ -105,13 +105,13 @@ public class GameOptionActivity extends AppCompatActivity {
             return;
         }
         DBOperations op = new DBOperations(new DBHelper(this));
-        maxScore = op.getMaxScore(userId, (int)id, difficulty);
+        maxScore = op.getMaxScore(userId, id, difficulty);
         MindBlowerAPI mindBlowerAPI = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(MindBlowerAPI.MIND_BLOWER_SERVER_URL)
                 .build()
                 .create(MindBlowerAPI.class);
-        mindBlowerAPI.getTopResults((int)id, difficulty, "Token " + token).enqueue(new Callback<TopResults>() {
+        mindBlowerAPI.getTopResults(id, difficulty, "Token " + token).enqueue(new Callback<TopResults>() {
             @Override
             public void onResponse(Call<TopResults> call, Response<TopResults> response) {
                 if (response.body() != null){
@@ -257,7 +257,7 @@ public class GameOptionActivity extends AppCompatActivity {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            startBtn.setOnClickListener(new StartGameOnClickListener((int)id - 1, difficultySeekBar.getProgress() + 1, 0, false, GameOptionActivity.this, true));
+            startBtn.setOnClickListener(new StartGameOnClickListener(id, difficultySeekBar.getProgress() + 1, 0, false, GameOptionActivity.this, true));
             int difficulty = seekBar.getProgress() + 1;
             retrieveDynamicInformationAboutGame(difficulty);
         }
