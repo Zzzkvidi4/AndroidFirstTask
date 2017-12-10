@@ -16,10 +16,30 @@ import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
  */
 
 public class DBOperations {
+    private static final String UNAUTHORIZED_USER = "Какой-то игрок";
+    public static final int NO_SCORES = -1;
     private SQLiteDatabase db;
 
     public DBOperations(DBHelper helper){
         db = helper.getWritableDatabase();
+    }
+
+    public String getUserFIOString(int user_id){
+        String[] columns = new String[] {"name", "surname"};
+        String selection = "id_user = ?";
+        String[] selectionValues = new String[] {Integer.toString(user_id)};
+        Cursor cursor = db.query("user", columns, selection, selectionValues, null, null, null);
+        int colIndexName = cursor.getColumnIndex("name");
+        int colIndexSurname = cursor.getColumnIndex("surname");
+        if (!cursor.moveToFirst()){
+            cursor.close();
+            return UNAUTHORIZED_USER;
+        } else {
+            String name = cursor.getString(colIndexName);
+            String surname = cursor.getString(colIndexSurname);
+            cursor.close();
+            return name + " " + surname;
+        }
     }
 
     public void addGameScore(int id_game, int score, int difficulty, int id_user){
@@ -54,5 +74,41 @@ public class DBOperations {
         }
         cursor.close();
         return gameMatches;
+    }
+
+    public int getMaxScore(int id_user, int id_game, int difficulty){
+        String[] columns = new String[]{"score"};
+        String selection = "id_user = ? and id_game = ? and difficulty = ?";
+        String[] selectionValues = new String[]{Integer.toString(id_user), Integer.toString(id_game), Integer.toString(difficulty)};
+        Cursor cursor = db.query("game_match", columns, selection, selectionValues, null, null, "score");
+        int colIndexScore = cursor.getColumnIndex("score");
+        if (cursor.moveToLast()){
+            int score = cursor.getInt(colIndexScore);
+            cursor.close();
+            return score;
+        } else {
+            cursor.close();
+            return NO_SCORES;
+        }
+    }
+
+    public GameInfo getGameInfo(int gameId){
+        String selection = "id_game = ?";
+        String[] selectionValues = new String[] {Integer.toString(gameId)};
+        Cursor cursor = db.query("game", null, selection, selectionValues, null, null, null);
+        if (!cursor.moveToFirst()){
+            cursor.close();
+            return null;
+        }
+        GameInfo gameInfo = new GameInfo();
+        int colIndexName = cursor.getColumnIndex("name");
+        int colIndexDescription = cursor.getColumnIndex("description");
+        int colIndexDisplayName = cursor.getColumnIndex("display_name");
+        int colIndexMaxDifficulty = cursor.getColumnIndex("max_difficulty");
+        gameInfo.setName(cursor.getString(colIndexName));
+        gameInfo.setDescription(cursor.getString(colIndexDescription));
+        gameInfo.setDisplayName(cursor.getString(colIndexDisplayName));
+        gameInfo.setMaxDifficulty(cursor.getInt(colIndexMaxDifficulty));
+        return gameInfo;
     }
 }
