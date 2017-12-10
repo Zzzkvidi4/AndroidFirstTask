@@ -27,13 +27,14 @@ public class MainActivity extends AppCompatActivity {
         gameActivityFactory = GameActivityFactory.getInstance();
         try {
             gameActivityFactory.registerConstructor(0, SpecksGameActivity.class);
+            gameActivityFactory.registerConstructor(1, SeqRepeaterGameActivity.class);
         }
         catch (NoSuchMethodException e){
             Log.d(LOG_TAG, "error in factory!");
         }
         infoTextView = (TextView)findViewById(R.id.infoTextView);
         selectGameListView = (ListView)findViewById(R.id.selectGameListView);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты"});
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты", "Повтори за мной"});
         selectGameListView.setAdapter(arrayAdapter);
         selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
         Button logoutBtn = (Button)findViewById(R.id.logoutBtn);
