@@ -35,6 +35,9 @@
             android:name=".SpecksGameActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".SeqRepeaterGameActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".GameFinishedActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
