@@ -1,5 +1,7 @@
 package zzzkvidi4.com.testandroidapplication1.seqRepeater;
 
+import android.graphics.Color;
+
 import zzzkvidi4.com.testandroidapplication1.SpecksGameActivity;
 
 /**
@@ -9,11 +11,13 @@ import zzzkvidi4.com.testandroidapplication1.SpecksGameActivity;
 public class SeqRepeaterGameObject {
     private int x, y;
     private int id;
+    private int color;
 
-    SeqRepeaterGameObject(int id, int x, int y) {
+    SeqRepeaterGameObject(int id, int x, int y, int color) {
         this.id = id;
         this.x = x;
         this.y = y;
+        this.color = color;
     }
 
     public int getX() {
@@ -24,8 +28,11 @@ public class SeqRepeaterGameObject {
         return y;
     }
 
-    public int hetId()
+    public int getId()
     {
         return id;
     }
+
+    public int getColor() { return color;}
+    public void setColor(int value) { color = value; }
 }
