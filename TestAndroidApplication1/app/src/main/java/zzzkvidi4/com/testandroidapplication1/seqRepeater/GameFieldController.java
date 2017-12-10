@@ -3,6 +3,7 @@ package zzzkvidi4.com.testandroidapplication1.seqRepeater;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
@@ -33,41 +34,54 @@ public class GameFieldController  implements GameController {
     @Override
     public void initializeField(int canvasWidth, int canvasHeight){
         gameField.initialize(canvasWidth, canvasHeight);
-        int cardWidth = gameField.getElemWidth(canvasWidth);
-        int cardHeight = gameField.getElemHeight(canvasHeight);
     }
 
     @Override
     public void draw(Canvas canvas) {
+        Paint mPaint = new Paint();
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setAntiAlias(true);
+        int radius = gameField.getElemWidth(canvas.getWidth())/2;
         for (int i = 0; i < fieldHeight; ++i){
             for (int j = 0; j < fieldWidth; ++j){
                 SeqRepeaterGameObject elem = gameField.getField()[i][j];
-                Paint paint = new Paint();
-                paint.setColor(elem.getColor());
-                canvas.drawCircle(elem.getX(), elem.getY(), 10, paint);
+                mPaint.setColor(elem.getColor());
+                canvas.drawCircle(elem.getX()+radius, elem.getY()+radius, radius, mPaint);
+                canvas.save();
             }
         }
     }
 
     @Override
     public void processTouch(MotionEvent event) {
-        if (isTouchable) {
-            gameField.checkOnTouch((int) event.getX(), (int) event.getY());
-        }
-        if (gameField.gameFinished()){
-            Timer timer = new Timer();
-            timer.schedule(new ShowFinalScoreTimerTask(), 2000);
-        }
+        //if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            if (isTouchable) {
+                gameField.checkOnTouch((int) event.getX(), (int) event.getY());
+            }
+            if (gameField.gameFinished()) {
+                Timer timer = new Timer();
+                timer.schedule(new ShowFinalScoreTimerTask(), 500);
+            }
+        //}
     }
 
     @Override
     public void startGameCycle() {
-        gameField.showWin();
+        int delayShow = 500;
+        int delay = fieldHeight*fieldWidth*GameField.ONE_CARD_DELAY + delayShow;
         Timer timer = new Timer();
-        timer.schedule(new HideFieldTimerTask(), 2000);
+        timer.schedule(new ShowWinTimerTask(), delayShow);
+        timer.schedule(new StartGameTimerTask(), delay);
     }
 
-    private class HideFieldTimerTask extends TimerTask {
+    private class ShowWinTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            gameField.showWin();
+        }
+    }
+
+    private class StartGameTimerTask extends TimerTask {
         @Override
         public void run() {
             isTouchable = true;
