@@ -2,6 +2,7 @@ package zzzkvidi4.com.testandroidapplication1;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -35,10 +36,10 @@ public class SeqRepeaterGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_specks_game);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         Button pauseBtn = (Button)findViewById(R.id.pauseGameBtn);
         pauseBtn.setOnClickListener(new PauseOnClickListener());
-
+        Typeface fontAwesomeFont = Typeface.createFromAsset(getAssets(), "font/fontawesome-webfont.ttf");
+        pauseBtn.setTypeface(fontAwesomeFont);
         SurfaceView view = (SurfaceView)findViewById(R.id.gameSurfaceView);
         GameController controller = new GameFieldController(this, 2, 3, difficulty);
         GameSurfaceHolderCallback gameSurfaceHolderCallback = new GameSurfaceHolderCallback(view.getHolder(), controller);

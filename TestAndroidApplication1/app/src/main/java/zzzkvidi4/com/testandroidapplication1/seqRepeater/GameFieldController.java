@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.view.MotionEvent;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import zzzkvidi4.com.testandroidapplication1.GameFinishedActivity;
+import zzzkvidi4.com.testandroidapplication1.R;
 import zzzkvidi4.com.testandroidapplication1.gameEngine.GameController;
 
 /**
@@ -26,7 +28,10 @@ public class GameFieldController  implements GameController {
     private int difficulty;
 
     public GameFieldController(Activity activity, int fieldWidth, int fieldHeight, int difficulty){
-        gameField = new GameField(fieldWidth, fieldHeight);
+        int winColor = ContextCompat.getColor(activity, R.color.WinColor);
+        int mainColor = ContextCompat.getColor(activity, R.color.mainFontColor);
+        int loseColor = ContextCompat.getColor(activity, R.color.LoseColor);
+        gameField = new GameField(fieldWidth, fieldHeight, winColor, mainColor, loseColor);
         this.fieldHeight = fieldHeight;
         this.fieldWidth = fieldWidth;
         this.activity = activity;
@@ -56,15 +61,13 @@ public class GameFieldController  implements GameController {
 
     @Override
     public void processTouch(MotionEvent event) {
-        //if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            if (isTouchable) {
-                gameField.checkOnTouch((int) event.getX(), (int) event.getY());
-            }
-            if (gameField.gameFinished()) {
-                Timer timer = new Timer();
-                timer.schedule(new ShowFinalScoreTimerTask(), 500);
-            }
-        //}
+        if (isTouchable) {
+            gameField.checkOnTouch((int) event.getX(), (int) event.getY());
+        }
+        if (gameField.gameFinished()) {
+            Timer timer = new Timer();
+            timer.schedule(new ShowFinalScoreTimerTask(), 500);
+        }
     }
 
     @Override
@@ -95,7 +98,7 @@ public class GameFieldController  implements GameController {
         public void run() {
             Intent intent = new Intent(activity, GameFinishedActivity.class);
             intent.putExtra("score", gameField.getGuessedCount());
-            intent.putExtra("id", 1);
+            intent.putExtra("id", 2);
             intent.putExtra("difficulty", difficulty);
             activity.finish();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

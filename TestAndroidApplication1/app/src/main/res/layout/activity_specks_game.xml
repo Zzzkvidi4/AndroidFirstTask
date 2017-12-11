@@ -23,9 +23,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/button"
-                android:text="@string/pause_btn_text"
-                android:textAllCaps="false" />
+                android:background="@drawable/empty_button"
+                android:text="@string/font_awesome_pause"
+                android:textAllCaps="false"
+                android:textColor="@color/mainFontColor"
+                android:textSize="30sp" />
 
         </LinearLayout>
 

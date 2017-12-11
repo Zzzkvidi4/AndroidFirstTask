@@ -50,7 +50,18 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e){
             e.printStackTrace();
         }
-        //cv.clear();
+        cv.clear();
+        cv.put("id_game", 2);
+        cv.put("name", "Повтори за мной");
+        cv.put("description", "Повтори показанную последовательность!");
+        cv.put("display_name", "Повтори за мной");
+        cv.put("max_difficulty", 4);
+        cv.put("icon", (String)null);
+        try {
+            long result = db.insertOrThrow("game", null, cv);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

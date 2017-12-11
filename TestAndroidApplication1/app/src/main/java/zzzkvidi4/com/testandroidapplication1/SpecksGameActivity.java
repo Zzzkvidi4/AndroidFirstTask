@@ -2,6 +2,7 @@ package zzzkvidi4.com.testandroidapplication1;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -34,11 +35,14 @@ public class SpecksGameActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Button pauseBtn = (Button)findViewById(R.id.pauseGameBtn);
         pauseBtn.setOnClickListener(new PauseOnClickListener());
+        Typeface fontAwesomeFont = Typeface.createFromAsset(getAssets(), "font/fontawesome-webfont.ttf");
+        pauseBtn.setTypeface(fontAwesomeFont);
         SurfaceView view = (SurfaceView)findViewById(R.id.gameSurfaceView);
         GameController controller = new CardFieldController(this, difficulty, getResources());
         GameSurfaceHolderCallback gameSurfaceHolderCallback = new GameSurfaceHolderCallback(view.getHolder(), controller);
         view.getHolder().addCallback(gameSurfaceHolderCallback);
         view.setOnTouchListener(new CardsOnTouchListener(controller));
+
     }
 
     @Override
