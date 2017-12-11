@@ -41,7 +41,18 @@ public class SeqRepeaterGameActivity extends AppCompatActivity {
         Typeface fontAwesomeFont = Typeface.createFromAsset(getAssets(), "font/fontawesome-webfont.ttf");
         pauseBtn.setTypeface(fontAwesomeFont);
         SurfaceView view = (SurfaceView)findViewById(R.id.gameSurfaceView);
-        GameController controller = new GameFieldController(this, 2, 3, difficulty);
+        int width = 2;
+        int height = 3;
+        switch (difficulty){
+            case 1:
+                height = 2;
+                break;
+            case 3:
+                width = 3;
+                height = 4;
+            default:
+        }
+        GameController controller = new GameFieldController(this, width, height, difficulty);
         GameSurfaceHolderCallback gameSurfaceHolderCallback = new GameSurfaceHolderCallback(view.getHolder(), controller);
         view.getHolder().addCallback(gameSurfaceHolderCallback);
         view.setOnTouchListener(new CardsOnTouchListener(controller));

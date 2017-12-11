@@ -43,7 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("name", "Парные карты");
         cv.put("description", "Открывайте карточки парами, пока они не закончатся!");
         cv.put("display_name", "Парные карты");
-        cv.put("max_difficulty", 4);
+        cv.put("max_difficulty", 3);
         cv.put("icon", (String)null);
         try {
             long result = db.insertOrThrow("game", null, cv);
@@ -55,7 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("name", "Повтори за мной");
         cv.put("description", "Повтори показанную последовательность!");
         cv.put("display_name", "Повтори за мной");
-        cv.put("max_difficulty", 4);
+        cv.put("max_difficulty", 3);
         cv.put("icon", (String)null);
         try {
             long result = db.insertOrThrow("game", null, cv);
