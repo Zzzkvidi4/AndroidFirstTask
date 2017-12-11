@@ -44,8 +44,8 @@ public class CardFieldController implements GameController {
 
     public CardFieldController(Activity activity, int difficulty, Resources resources){
         this.difficulty = difficulty;
-        fieldHeight = CARD_FIELD_HEIGHT[difficulty - 1];
-        fieldWidth = CARD_FIELD_WIDTH[difficulty - 1];
+        fieldHeight = CARD_FIELD_HEIGHT[0];//difficulty - 1
+        fieldWidth = CARD_FIELD_WIDTH[0];
         Bitmaps = new Bitmap[fieldWidth * fieldHeight / 2 + 1];
         cardField = new CardField(fieldWidth, fieldHeight);
         prepareBitmaps(resources);

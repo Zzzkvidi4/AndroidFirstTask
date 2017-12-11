@@ -12,4 +12,6 @@
     <color name="WinColor">#128e12</color>
     <color name="LoseColor">#910303</color>
     <color name="Transparent">#00000000</color>
+    <color name="DarkTransparent">#44000000</color>
+    <color name="DarkElem">#547fa7</color>
 </resources>

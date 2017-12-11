@@ -2,6 +2,7 @@ package zzzkvidi4.com.testandroidapplication1;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
         logoutBtn = (Button)findViewById(R.id.logoutBtn);
         logoutBtn.setOnClickListener(new LogOutOnClickListener());
-
+        Typeface fontAwesomeFont = Typeface.createFromAsset(getAssets(), "font/fontawesome-webfont.ttf");
+        logoutBtn.setTypeface(fontAwesomeFont);
         uploadUserInfo();
     }
 
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         int id = preferences.getInt("id", getResources().getInteger(R.integer.no_user_id));
         if (id == getResources().getInteger(R.integer.no_user_id)){
             logoutBtn.setVisibility(View.INVISIBLE);
+        } else{
+            logoutBtn.setVisibility(View.VISIBLE);
         }
         DBOperations op = new DBOperations(new DBHelper(this));
         String userName = op.getUserFIOString(id);

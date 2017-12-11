@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -50,10 +51,14 @@ public class GameFinishedActivity extends AppCompatActivity {
         int difficulty = intent.getIntExtra("difficulty", 0);
         int id = intent.getIntExtra("id", 0);
         int score = intent.getIntExtra("score", 0);
+        TextView currentScore = (TextView)findViewById(R.id.currentScore);
+        TextView maxScoreTV = (TextView)findViewById(R.id.maxScore);
+        currentScore.setText("Текущий счет: " + score);
         if (userId != getResources().getInteger(R.integer.no_user_id)){
             DBOperations operations = new DBOperations(new DBHelper(this));
             operations.addGameScore(id, score, difficulty, userId);
             int maxScore = operations.getMaxScore(userId, id, difficulty);
+            maxScoreTV.setText("Ваш рекорд: " + maxScore);
             if (!token.equals(getResources().getString(R.string.no_token))){
                 GameScore gameScore = new GameScore();
                 gameScore.setScore(maxScore);

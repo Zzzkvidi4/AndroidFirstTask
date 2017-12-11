@@ -20,6 +20,8 @@
     <string name="back_to_game_btn_text">Назад</string>
     <string name="pause_btn_text">Пауза</string>
     <string name="font_awesome_pause">&#xf04c;</string>
+    <string name="font_awesome_vk">&#xf189;</string>
+    <string name="font_awesome_log_out">&#xf08b;</string>
     <string name="no_token" />
     <string name="vk_btn_title">VK</string>
     <integer name="no_user_id">-1</integer>

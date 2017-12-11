@@ -25,14 +25,15 @@
 
     <Button
         android:id="@+id/logoutBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50sp"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/button"
-        android:text="@string/log_out_btn_text_rus"
+        android:background="@drawable/empty_button"
+        android:text="@string/font_awesome_log_out"
         android:textAllCaps="false"
         android:textColor="@color/mainFontColor"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:textAllCaps="false" />

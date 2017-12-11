@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +61,8 @@ public class GameOptionActivity extends AppCompatActivity {
     private Button startBtn;
     private SeekBar difficultySeekBar;
     private Button authBtn;
+    private TextView scoreTV;
+    private ProgressBar loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +73,12 @@ public class GameOptionActivity extends AppCompatActivity {
         authBtn = (Button)findViewById(R.id.authorizeBtn);
         authBtn.setVisibility(View.INVISIBLE);
         authBtn.setOnClickListener(new TryAgainUploadInfoListener());
+        Typeface fontAwesomeFont = Typeface.createFromAsset(getAssets(), "font/fontawesome-webfont.ttf");
+        authBtn.setTypeface(fontAwesomeFont);
         top10ListView = (ListView)findViewById(R.id.top10ListView);
         difficultySeekBar = (SeekBar) findViewById(R.id.difficultySeekBar);
+        scoreTV = (TextView)findViewById(R.id.gameScore);
+        loader = (ProgressBar)findViewById(R.id.progress);
         retrieveStaticInformationAboutGame();
         retrieveDynamicInformationAboutGame(DEFAULT_DIFFICULTY);
         difficultySeekBar.setMax(maxDifficulty - 1);
@@ -95,6 +103,7 @@ public class GameOptionActivity extends AppCompatActivity {
             finish();
             return;
         }
+        name = gameInfo.getName();
         description = gameInfo.getDescription();
         maxDifficulty = gameInfo.getMaxDifficulty();
     }
@@ -102,10 +111,13 @@ public class GameOptionActivity extends AppCompatActivity {
     public void retrieveDynamicInformationAboutGame(int difficulty){
         if ((token.equals(getResources().getString(R.string.no_token))) || (userId == getResources().getInteger(R.integer.no_user_id))) {
             authBtn.setVisibility(View.VISIBLE);
+            loader.setVisibility(View.INVISIBLE);
             return;
         }
         DBOperations op = new DBOperations(new DBHelper(this));
         maxScore = op.getMaxScore(userId, id, difficulty);
+        if (maxScore != -1)
+            scoreTV.setText("Ваш рекорд: " + maxScore);
         MindBlowerAPI mindBlowerAPI = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(MindBlowerAPI.MIND_BLOWER_SERVER_URL)
@@ -124,6 +136,7 @@ public class GameOptionActivity extends AppCompatActivity {
                     if (top10ListView != null) {
                         top10ListView.setAdapter(arrayAdapter);
                         top10ListView.invalidate();
+                        loader.setVisibility(View.INVISIBLE);
                         top10ListView.setVisibility(View.VISIBLE);
                     }
                 }
@@ -133,6 +146,7 @@ public class GameOptionActivity extends AppCompatActivity {
             public void onFailure(Call<TopResults> call, Throwable t) {
                 Toast.makeText(GameOptionActivity.this, "Соединение с сервером недоступно.", Toast.LENGTH_LONG).show();
                 top10ListView.setVisibility(View.INVISIBLE);
+                loader.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -186,6 +200,8 @@ public class GameOptionActivity extends AppCompatActivity {
 
         @Override
         public void onError(VKError error) {
+            authBtn.setVisibility(View.VISIBLE);
+            loader.setVisibility(View.INVISIBLE);
             // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
         }
     }
@@ -204,7 +220,8 @@ public class GameOptionActivity extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<User> call, Throwable t) {
-
+            authBtn.setVisibility(View.VISIBLE);
+            loader.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -233,12 +250,16 @@ public class GameOptionActivity extends AppCompatActivity {
 
         @Override
         public void onError(VKError error) {
+            authBtn.setVisibility(View.VISIBLE);
+            loader.setVisibility(View.INVISIBLE);
             Toast.makeText(GameOptionActivity.this, "Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.", Toast.LENGTH_SHORT).show();
 
         }
 
         @Override
         public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+            authBtn.setVisibility(View.VISIBLE);
+            loader.setVisibility(View.INVISIBLE);
             Toast.makeText(GameOptionActivity.this, "Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -258,6 +279,7 @@ public class GameOptionActivity extends AppCompatActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             startBtn.setOnClickListener(new StartGameOnClickListener(id, difficultySeekBar.getProgress() + 1, 0, false, GameOptionActivity.this, true));
+            loader.setVisibility(View.VISIBLE);
             int difficulty = seekBar.getProgress() + 1;
             retrieveDynamicInformationAboutGame(difficulty);
         }
@@ -267,6 +289,8 @@ public class GameOptionActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            authBtn.setVisibility(View.INVISIBLE);
+            loader.setVisibility(View.VISIBLE);
             VKSdk.login(GameOptionActivity.this, VKScope.EMAIL);
         }
     }

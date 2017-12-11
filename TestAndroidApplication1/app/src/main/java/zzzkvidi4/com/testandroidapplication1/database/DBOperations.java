@@ -16,7 +16,7 @@ import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
  */
 
 public class DBOperations {
-    private static final String UNAUTHORIZED_USER = "Какой-то игрок";
+    private static final String UNAUTHORIZED_USER = "Анонимный игрок";
     public static final int NO_SCORES = -1;
     private SQLiteDatabase db;
 
