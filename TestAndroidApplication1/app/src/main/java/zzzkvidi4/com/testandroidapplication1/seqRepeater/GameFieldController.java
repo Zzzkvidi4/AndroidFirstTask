@@ -54,6 +54,8 @@ public class GameFieldController  implements GameController {
                 SeqRepeaterGameObject elem = gameField.getField()[i][j];
                 mPaint.setColor(elem.getColor());
                 canvas.drawCircle(elem.getX()+radius, elem.getY()+radius, radius, mPaint);
+                mPaint.setColor(Color.rgb(	155,	193,	228));
+                canvas.drawCircle(elem.getX()+radius, elem.getY()+radius, radius/3, mPaint);
                 canvas.save();
             }
         }
