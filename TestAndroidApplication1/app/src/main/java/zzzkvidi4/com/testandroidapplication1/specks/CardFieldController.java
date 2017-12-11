@@ -24,10 +24,10 @@ import zzzkvidi4.com.testandroidapplication1.R;
  */
 
 public class CardFieldController implements GameController {
-    private static final int[] BITMAP_IDS = new int[] {R.drawable.book, R.drawable.dipper, R.drawable.stan, R.drawable.mable};
+    private static final int[] BITMAP_IDS = new int[] {R.drawable.book, R.drawable.dipper, R.drawable.stan, R.drawable.mable, R.drawable.bill, R.drawable.ford, R.drawable.gideon, R.drawable.soos, R.drawable.wendy};
     private static final int MAX_SCORE = 2000;
-    private static final int[] CARD_FIELD_WIDTH = new int[] {2, 3, 3, 4};
-    private static final int[] CARD_FIELD_HEIGHT = new int[] {3, 3, 4, 4};
+    private static final int[] CARD_FIELD_WIDTH = new int[] {2, 3, 4};
+    private static final int[] CARD_FIELD_HEIGHT = new int[] {3, 4, 4};
     private static final long SHOW_FINISH_SCREEN_DELAY = 2000;
     private static final long HIDE_FIELD_DELAY = 2000;
     private static final int HIDDEN_FACE_BITMAP_ID = 0;
@@ -44,8 +44,8 @@ public class CardFieldController implements GameController {
 
     public CardFieldController(Activity activity, int difficulty, Resources resources){
         this.difficulty = difficulty;
-        fieldHeight = CARD_FIELD_HEIGHT[0];//difficulty - 1
-        fieldWidth = CARD_FIELD_WIDTH[0];
+        fieldHeight = CARD_FIELD_HEIGHT[difficulty - 1];
+        fieldWidth = CARD_FIELD_WIDTH[difficulty - 1];
         Bitmaps = new Bitmap[fieldWidth * fieldHeight / 2 + 1];
         cardField = new CardField(fieldWidth, fieldHeight);
         prepareBitmaps(resources);
