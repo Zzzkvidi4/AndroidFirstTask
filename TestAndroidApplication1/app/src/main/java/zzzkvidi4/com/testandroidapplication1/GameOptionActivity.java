@@ -128,9 +128,12 @@ public class GameOptionActivity extends AppCompatActivity {
                 .baseUrl(MindBlowerAPI.MIND_BLOWER_SERVER_URL)
                 .build()
                 .create(MindBlowerAPI.class);
+        loader.setVisibility(View.VISIBLE);
+        top10ListView.setVisibility(View.INVISIBLE);
         mindBlowerAPI.getTopResults(id, difficulty, "Token " + token).enqueue(new Callback<TopResults>() {
             @Override
             public void onResponse(Call<TopResults> call, Response<TopResults> response) {
+                loader.setVisibility(View.INVISIBLE);
                 if (response.body() != null){
                     TopResults results = response.body();
                     ArrayList<String> resultList = new ArrayList<>();
@@ -141,7 +144,6 @@ public class GameOptionActivity extends AppCompatActivity {
                     if (top10ListView != null) {
                         top10ListView.setAdapter(arrayAdapter);
                         top10ListView.invalidate();
-                        loader.setVisibility(View.INVISIBLE);
                         top10ListView.setVisibility(View.VISIBLE);
                     }
                 }
