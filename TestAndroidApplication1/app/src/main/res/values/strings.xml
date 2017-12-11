@@ -26,6 +26,7 @@
     <string name="vk_btn_title">VK</string>
     <string name="ok_btn_text">Да</string>
     <string name="no_btn_text">Нет</string>
+    <string name="ask_logout_text">Вы уверены, что хотите разлогиниться?</string>
     <integer name="no_user_id">-1</integer>
     <integer name="no_matches">-1</integer>
 
