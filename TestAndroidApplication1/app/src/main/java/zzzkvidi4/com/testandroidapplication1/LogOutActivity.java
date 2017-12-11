@@ -14,9 +14,9 @@ public class LogOutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logout);
-        Button logout = (Button)findViewById(R.id.backToMenuBtn);
+        Button logout = (Button)findViewById(R.id.YesLogoutBtn);
         //logout.setOnClickListener(new LogOutOnClickListener(this, false));
-        Button cancel = (Button)findViewById(R.id.backToGameBtn);
+        Button cancel = (Button)findViewById(R.id.NoLogoutBtn);
         //cancel.setOnClickListener(new BackOnClickListener(this));
     }
 }
