@@ -9,54 +9,47 @@
 
     <Button
         android:id="@+id/YesLogoutBtn"
-        android:layout_width="0dp"
-        android:layout_height="49dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="200dp"
-        android:layout_marginStart="100dp"
+        android:layout_width="85dp"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/button"
         android:text="@string/ok_btn_text"
         android:textAllCaps="false"
         android:textColor="@color/mainFontColor"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
         android:id="@+id/NoLogoutBtn"
-        android:layout_width="0dp"
+        android:layout_width="85dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="200dp"
-        android:layout_marginEnd="100dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/button"
         android:text="@string/no_btn_text"
         android:textAllCaps="false"
         android:textColor="@color/mainFontColor"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.498" />
+        app:layout_constraintEnd_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="49dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="172dp"
+        android:layout_width="187dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="@color/mainTheme"
         android:text="@string/ask_logout_text"
         android:textAlignment="center"
         android:textColor="@color/mainFontColor"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.389" />
 </android.support.constraint.ConstraintLayout>
