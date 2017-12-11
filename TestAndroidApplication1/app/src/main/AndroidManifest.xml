@@ -44,6 +44,9 @@
         <activity
             android:name=".GamePauseActivity"
             android:theme="@style/Pause" />
+        <activity
+            android:name=".LogOutActivity"
+            android:theme="@style/Pause" />
     </application>
 
 </manifest>
