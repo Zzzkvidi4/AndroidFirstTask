@@ -29,7 +29,7 @@ public class GameField {
 
     private boolean islosed;
 
-
+    private int vertDist;
 
 
     public GameField(int fieldWidth, int fieldHeight, int winColor, int mainColor, int loseColor) {
@@ -40,6 +40,7 @@ public class GameField {
         this.winColor = winColor;
         this.mainColor = mainColor;
         this.loseColor = loseColor;
+        this.vertDist = (fieldHeight == 2) ? ELEMS_DISTANCE*3 : ELEMS_DISTANCE;
     }
 
     public SeqRepeaterGameObject[][] getField() {return field;}
@@ -75,7 +76,7 @@ public class GameField {
         }
         for(int i = 0; i < fieldHeight; ++i){
             for (int j = 0; j < fieldWidth; ++j){
-                SeqRepeaterGameObject elem = new SeqRepeaterGameObject(i*fieldWidth+j, j * (elemWidth + ELEMS_DISTANCE)+ELEMS_DISTANCE, i * (elemHeight + ELEMS_DISTANCE)+ELEMS_DISTANCE, mainColor);
+                SeqRepeaterGameObject elem = new SeqRepeaterGameObject(i*fieldWidth+j, j * (elemWidth + ELEMS_DISTANCE)+ELEMS_DISTANCE, i * (elemHeight + vertDist)+vertDist, mainColor);
                 field[i][j] = elem;
             }
         }
