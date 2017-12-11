@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Mind Blower</string>
-    <integer name="com_vk_sdk_AppId">6229699</integer>
+    <integer name="com_vk_sdk_AppId">6214742</integer>
 
     <string name="title_activity_second">SecondActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -19,4 +19,9 @@
     <string name="back_to_menu_btn_text">В меню</string>
     <string name="back_to_game_btn_text">Назад</string>
     <string name="pause_btn_text">Пауза</string>
+    <string name="no_token" />
+    <string name="vk_btn_title">VK</string>
+    <integer name="no_user_id">-1</integer>
+    <integer name="no_matches">-1</integer>
+
 </resources>

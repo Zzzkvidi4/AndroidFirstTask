@@ -11,7 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.vk.sdk.VKSdk;
+
+import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
+import zzzkvidi4.com.testandroidapplication1.database.DBOperations;
 
 public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "Custom error: ";
@@ -19,50 +23,45 @@ public class MainActivity extends AppCompatActivity {
     private TextView infoTextView;
     private ListView selectGameListView;
     private GameActivityFactory gameActivityFactory;
+    private Button logoutBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        gameActivityFactory = GameActivityFactory.getInstance();
+        GameActivityFactory gameActivityFactory = GameActivityFactory.getInstance();
         try {
-            gameActivityFactory.registerConstructor(0, SpecksGameActivity.class);
-            gameActivityFactory.registerConstructor(1, SeqRepeaterGameActivity.class);
+            gameActivityFactory.registerConstructor(1, SpecksGameActivity.class);
+            gameActivityFactory.registerConstructor(2, SeqRepeaterGameActivity.class);
         }
         catch (NoSuchMethodException e){
             Log.d(LOG_TAG, "error in factory!");
         }
         infoTextView = (TextView)findViewById(R.id.infoTextView);
-        selectGameListView = (ListView)findViewById(R.id.selectGameListView);
+        ListView selectGameListView = (ListView)findViewById(R.id.selectGameListView);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.button_list_item, new String[] {"Парные карты", "Повтори за мной"});
         selectGameListView.setAdapter(arrayAdapter);
         selectGameListView.setOnItemClickListener(new SelectGameItemClickListener());
         Button logoutBtn = (Button)findViewById(R.id.logoutBtn);
         logoutBtn.setOnClickListener(new LogOutOnClickListener());
-        if (!VKSdk.isLoggedIn()) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            uploadUserInfo();
-        }
-        setupGamesInfo();
+        uploadUserInfo();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        uploadUserInfo();
     }
 
     public void uploadUserInfo(){
-        preferences = getSharedPreferences("user_info", MODE_PRIVATE);
-        String name = preferences.getString("name", "Имя");
-        String surname = preferences.getString("surname", "Фамилия");
-        infoTextView.clearComposingText();
-        infoTextView.setText(name + " " + surname);
-    }
-
-    public void setupGamesInfo(){
-        preferences = getSharedPreferences("game_info0", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("name", "Парные карты");
-        editor.putString("description", "Открывайте одинаковые карты парами,\nпока они не закончатся!");
-        editor.apply();
+        SharedPreferences preferences = getSharedPreferences("user_info", MODE_PRIVATE);
+        int id = preferences.getInt("id", getResources().getInteger(R.integer.no_user_id));
+        if (id == getResources().getInteger(R.integer.no_user_id)){
+            logoutBtn.setVisibility(View.INVISIBLE);
+        }
+        DBOperations op = new DBOperations(new DBHelper(this));
+        String userName = op.getUserFIOString(id);
+        infoTextView.setText(userName);
     }
 
     private class SelectGameItemClickListener implements AdapterView.OnItemClickListener{
@@ -78,10 +77,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            SharedPreferences.Editor editor = getSharedPreferences("user_info", MODE_PRIVATE).edit();
+            editor.clear();
+            editor.apply();
             VKSdk.logout();
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            Toast.makeText(MainActivity.this, "Вы успешно разлогинились!", Toast.LENGTH_LONG).show();
+            uploadUserInfo();
         }
     }
 }
