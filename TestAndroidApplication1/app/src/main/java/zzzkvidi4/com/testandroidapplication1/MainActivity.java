@@ -59,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
         uploadUserInfo();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        uploadUserInfo();
+    }
+
     public void uploadUserInfo(){
         SharedPreferences preferences = getSharedPreferences("user_info", MODE_PRIVATE);
         int id = preferences.getInt("id", getResources().getInteger(R.integer.no_user_id));
@@ -85,12 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            SharedPreferences.Editor editor = getSharedPreferences("user_info", MODE_PRIVATE).edit();
-            editor.clear();
-            editor.apply();
-            VKSdk.logout();
-            Toast.makeText(MainActivity.this, "Вы успешно разлогинились!", Toast.LENGTH_LONG).show();
-            uploadUserInfo();
+            Intent intent = new Intent(MainActivity.this, LogOutActivity.class);
+            startActivity(intent);
         }
     }
 }
