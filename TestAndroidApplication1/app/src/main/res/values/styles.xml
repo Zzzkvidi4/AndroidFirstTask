@@ -20,9 +20,9 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
-    <style name="ProgressBar" parent="@android:style/Widget.ProgressBar">
-        <item name="colorControlNormal">@color/mainFontColor</item>
-        <item name="android:colorBackground">@color/mainTheme</item>
+    <style name="ProgressBar" parent="@android:style/Widget.ProgressBar.Inverse">
+        <!--<item name="android:indeterminateTint">@color/mainFontColor</item>
+        <item name="android:colorBackground">@color/mainTheme</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">
