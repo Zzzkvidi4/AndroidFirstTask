@@ -3,21 +3,17 @@ package zzzkvidi4.com.testandroidapplication1;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -40,11 +36,11 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import okhttp3.HttpUrl;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,7 +53,6 @@ import zzzkvidi4.com.testandroidapplication1.onClickListeners.StartGameOnClickLi
 import zzzkvidi4.com.testandroidapplication1.syncronization.MindBlowerAPI;
 import zzzkvidi4.com.testandroidapplication1.syncronization.Top;
 import zzzkvidi4.com.testandroidapplication1.syncronization.TopResults;
-import zzzkvidi4.com.testandroidapplication1.syncronization.TopUser;
 import zzzkvidi4.com.testandroidapplication1.syncronization.User;
 import zzzkvidi4.com.testandroidapplication1.syncronization.UserInfo;
 
@@ -77,7 +72,8 @@ public class GameOptionActivity extends AppCompatActivity {
     private Button authBtn;
     private TextView scoreTV;
     private ProgressBar loader;
-    private boolean isUploading = false;
+    private boolean isVKInfoUploading = false;
+    private boolean isMindBlowerTokenUploading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +122,7 @@ public class GameOptionActivity extends AppCompatActivity {
     }
 
     public void retrieveDynamicInformationAboutGame(int difficulty){
-        if (((token.equals(getResources().getString(R.string.no_token))) || (userId == getResources().getInteger(R.integer.no_user_id))) && !isUploading) {
+        if (((token.equals(getResources().getString(R.string.no_token))) || (userId == getResources().getInteger(R.integer.no_user_id))) && !(isVKInfoUploading || isMindBlowerTokenUploading)) {
             authBtn.setVisibility(View.VISIBLE);
             loader.setVisibility(View.INVISIBLE);
             return;
@@ -145,6 +141,10 @@ public class GameOptionActivity extends AppCompatActivity {
         mindBlowerAPI.getTopResults(id, difficulty, "Token " + token).enqueue(new Callback<TopResults>() {
             @Override
             public void onResponse(Call<TopResults> call, Response<TopResults> response) {
+                String requestDifficulty = call.request().url().pathSegments().get(2);
+                if (difficultySeekBar.getProgress() + 1 != Integer.parseInt(requestDifficulty)){
+                    return;
+                }
                 loader.setVisibility(View.INVISIBLE);
                 if (response.body() != null){
                     TopResults results = response.body();
@@ -163,6 +163,10 @@ public class GameOptionActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<TopResults> call, Throwable t) {
+                String requestDifficulty = call.request().url().pathSegments().get(2);
+                if (difficultySeekBar.getProgress() + 1 != Integer.parseInt(requestDifficulty)){
+                    return;
+                }
                 Toast.makeText(GameOptionActivity.this, "Соединение с сервером недоступно.", Toast.LENGTH_LONG).show();
                 top10ListView.setVisibility(View.INVISIBLE);
                 loader.setVisibility(View.INVISIBLE);
@@ -212,10 +216,8 @@ public class GameOptionActivity extends AppCompatActivity {
             info.setEmail(email);
             info.setProvider("vk");
             info.setVk_token(token);
+            isMindBlowerTokenUploading = true;
             mindBlowerAPI.getUserToken(info).enqueue(new OnMindBlowerTokenGet());
-            /*VKRequest request = new VKRequest("account.getProfileInfo");
-            request.executeWithListener(new CustomVKRequestListener(Integer.parseInt(res.userId)));*/
-            isUploading = true;
             VKRequest photoRequest = VKApi.users().get(VKParameters.from(VKApiConst.USER_IDS, res.userId, VKApiConst.FIELDS, "has_photo, photo_50"));
             photoRequest.executeWithListener(new UsersGetVKRequestListener(Integer.parseInt(res.userId)));
         }
@@ -232,22 +234,24 @@ public class GameOptionActivity extends AppCompatActivity {
         @Override
         public void onResponse(Call<User> call, Response<User> response) {
             if (response.body() != null) {
+                //call.request().body()
                 preferences = getSharedPreferences("user_info", MODE_PRIVATE);
                 preferences.edit().putString("token", response.body().getToken()).apply();
                 GameOptionActivity.this.token = response.body().getToken();
                 authBtn.setVisibility(View.INVISIBLE);
-                isUploading = false;
+                isMindBlowerTokenUploading = false;
                 retrieveDynamicInformationAboutGame(difficultySeekBar.getProgress() + 1);
             }
         }
 
         @Override
         public void onFailure(Call<User> call, Throwable t) {
+            isMindBlowerTokenUploading = false;
             authBtn.setVisibility(View.VISIBLE);
             loader.setVisibility(View.INVISIBLE);
-            isUploading = false;
         }
     }
+
     private class UsersGetVKRequestListener extends VKRequest.VKRequestListener{
         private int userId;
 
@@ -299,7 +303,7 @@ public class GameOptionActivity extends AppCompatActivity {
             }
             setupUserInfo(name, surname, userId);
             GameOptionActivity.this.userId = userId;
-            isUploading = false;
+            isVKInfoUploading = false;
         }
 
         @Override
@@ -307,7 +311,7 @@ public class GameOptionActivity extends AppCompatActivity {
             authBtn.setVisibility(View.VISIBLE);
             loader.setVisibility(View.INVISIBLE);
             Toast.makeText(GameOptionActivity.this, "Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.", Toast.LENGTH_SHORT).show();
-            isUploading = false;
+            isVKInfoUploading = false;
         }
 
         @Override
@@ -315,7 +319,7 @@ public class GameOptionActivity extends AppCompatActivity {
             authBtn.setVisibility(View.VISIBLE);
             loader.setVisibility(View.INVISIBLE);
             Toast.makeText(GameOptionActivity.this, "Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.", Toast.LENGTH_SHORT).show();
-            isUploading = false;
+            isVKInfoUploading = false;
         }
     }
 
@@ -383,6 +387,7 @@ public class GameOptionActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            isVKInfoUploading = true;
             authBtn.setVisibility(View.INVISIBLE);
             loader.setVisibility(View.VISIBLE);
             VKSdk.login(GameOptionActivity.this, VKScope.EMAIL);
