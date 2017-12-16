@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -41,6 +43,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -131,7 +134,7 @@ public class GameOptionActivity extends AppCompatActivity {
         DBOperations op = new DBOperations(new DBHelper(this));
         maxScore = op.getMaxScore(userId, id, difficulty);
         if (maxScore != -1)
-            scoreTV.setText("Ваш рекорд: " + maxScore);
+            scoreTV.setText(String.format(Locale.ENGLISH, "Ваш рекорд: %d", maxScore));
         MindBlowerAPI mindBlowerAPI = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(MindBlowerAPI.MIND_BLOWER_SERVER_URL)
@@ -167,7 +170,7 @@ public class GameOptionActivity extends AppCompatActivity {
         });
     }
 
-    protected void setupUserInfo(String name, String surname, int id, Bitmap bitmap){
+    protected void setupUserInfo(String name, String surname, int id){
         preferences = getSharedPreferences("user_info", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("id", id);
@@ -180,9 +183,6 @@ public class GameOptionActivity extends AppCompatActivity {
                 cv.put("name", name);
                 cv.put("surname", surname);
                 cv.put("id_user", id);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                cv.put("icon", stream.toByteArray());
                 db.insert("user", null, cv);
             }
             c.close();
@@ -267,19 +267,37 @@ public class GameOptionActivity extends AppCompatActivity {
                 name = userInfo.getString("first_name");
                 surname = userInfo.getString("last_name");
                 int hasPhoto = userInfo.getInt("has_photo");
+                final int id = userInfo.getInt("id");
                 if (hasPhoto == 1) {
                     imgLink = userInfo.getString("photo_50");
-                    userPhoto = Picasso.with(GameOptionActivity.this).load(imgLink).get();
-                } else {
-                    userPhoto = BitmapFactory.decodeResource(getResources(), R.drawable.dipper);
+                    Target target = new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            DBOperations op = new DBOperations(new DBHelper(GameOptionActivity.this));
+                            op.setUserIcon(id, bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Bitmap userPhoto = BitmapFactory.decodeResource(getResources(), R.drawable.dipper);
+                            DBOperations op = new DBOperations(new DBHelper(GameOptionActivity.this));
+                            op.setUserIcon(id, userPhoto);
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    };
+                    Picasso.with(GameOptionActivity.this).load(imgLink).into(target);
                 }
-            } catch (JSONException | IOException e){
+            } catch (JSONException e){
                 e.printStackTrace();
                 name = "Имя";
                 surname = "Фамилия";
-                userPhoto = BitmapFactory.decodeResource(getResources(), R.drawable.dipper);
+
             }
-            setupUserInfo(name, surname, userId, userPhoto);
+            setupUserInfo(name, surname, userId);
             GameOptionActivity.this.userId = userId;
             isUploading = false;
         }
@@ -320,7 +338,7 @@ public class GameOptionActivity extends AppCompatActivity {
                 name = "Имя";
                 surname = "Фамилия";
             }
-            setupUserInfo(name, surname, userId, null);
+            setupUserInfo(name, surname, userId);
             GameOptionActivity.this.userId = userId;
         }
 

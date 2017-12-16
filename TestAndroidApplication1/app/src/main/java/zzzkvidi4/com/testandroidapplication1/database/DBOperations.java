@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,7 +20,7 @@ import zzzkvidi4.com.testandroidapplication1.database.DBHelper;
 
 public class DBOperations {
     private static final String UNAUTHORIZED_USER = "Анонимный игрок";
-    public static final int NO_SCORES = -1;
+    private static final int NO_SCORES = -1;
     private SQLiteDatabase db;
 
     public DBOperations(DBHelper helper){
@@ -42,6 +43,14 @@ public class DBOperations {
             cursor.close();
             return name + " " + surname;
         }
+    }
+
+    public void setUserIcon(int userId, Bitmap bitmap){
+        ContentValues cv = new ContentValues();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        cv.put("icon", stream.toByteArray());
+        db.update("user", cv, "id_user = ?", new String[]{Integer.toString(userId)});
     }
 
     public Bitmap getUserIcon(int user_id){
