@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
@@ -21,17 +23,23 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -66,6 +74,7 @@ public class GameOptionActivity extends AppCompatActivity {
     private Button authBtn;
     private TextView scoreTV;
     private ProgressBar loader;
+    private boolean isUploading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +123,7 @@ public class GameOptionActivity extends AppCompatActivity {
     }
 
     public void retrieveDynamicInformationAboutGame(int difficulty){
-        if ((token.equals(getResources().getString(R.string.no_token))) || (userId == getResources().getInteger(R.integer.no_user_id))) {
+        if (((token.equals(getResources().getString(R.string.no_token))) || (userId == getResources().getInteger(R.integer.no_user_id))) && !isUploading) {
             authBtn.setVisibility(View.VISIBLE);
             loader.setVisibility(View.INVISIBLE);
             return;
@@ -158,7 +167,7 @@ public class GameOptionActivity extends AppCompatActivity {
         });
     }
 
-    protected void setupUserInfo(String name, String surname, int id){
+    protected void setupUserInfo(String name, String surname, int id, Bitmap bitmap){
         preferences = getSharedPreferences("user_info", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("id", id);
@@ -171,6 +180,9 @@ public class GameOptionActivity extends AppCompatActivity {
                 cv.put("name", name);
                 cv.put("surname", surname);
                 cv.put("id_user", id);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                cv.put("icon", stream.toByteArray());
                 db.insert("user", null, cv);
             }
             c.close();
@@ -201,8 +213,11 @@ public class GameOptionActivity extends AppCompatActivity {
             info.setProvider("vk");
             info.setVk_token(token);
             mindBlowerAPI.getUserToken(info).enqueue(new OnMindBlowerTokenGet());
-            VKRequest request = new VKRequest("account.getProfileInfo");
-            request.executeWithListener(new CustomVKRequestListener(Integer.parseInt(res.userId)));
+            /*VKRequest request = new VKRequest("account.getProfileInfo");
+            request.executeWithListener(new CustomVKRequestListener(Integer.parseInt(res.userId)));*/
+            isUploading = true;
+            VKRequest photoRequest = VKApi.users().get(VKParameters.from(VKApiConst.USER_IDS, res.userId, VKApiConst.FIELDS, "has_photo, photo_50"));
+            photoRequest.executeWithListener(new UsersGetVKRequestListener(Integer.parseInt(res.userId)));
         }
 
         @Override
@@ -221,6 +236,7 @@ public class GameOptionActivity extends AppCompatActivity {
                 preferences.edit().putString("token", response.body().getToken()).apply();
                 GameOptionActivity.this.token = response.body().getToken();
                 authBtn.setVisibility(View.INVISIBLE);
+                isUploading = false;
                 retrieveDynamicInformationAboutGame(difficultySeekBar.getProgress() + 1);
             }
         }
@@ -229,6 +245,59 @@ public class GameOptionActivity extends AppCompatActivity {
         public void onFailure(Call<User> call, Throwable t) {
             authBtn.setVisibility(View.VISIBLE);
             loader.setVisibility(View.INVISIBLE);
+            isUploading = false;
+        }
+    }
+    private class UsersGetVKRequestListener extends VKRequest.VKRequestListener{
+        private int userId;
+
+        UsersGetVKRequestListener(int userId){
+            this.userId = userId;
+        }
+
+        @Override
+        public void onComplete(VKResponse response) {
+            JSONObject resp = response.json;
+            String name;
+            String surname;
+            String imgLink;
+            Bitmap userPhoto;
+            try {
+                JSONObject userInfo = resp.getJSONArray("response").getJSONObject(0);
+                name = userInfo.getString("first_name");
+                surname = userInfo.getString("last_name");
+                int hasPhoto = userInfo.getInt("has_photo");
+                if (hasPhoto == 1) {
+                    imgLink = userInfo.getString("photo_50");
+                    userPhoto = Picasso.with(GameOptionActivity.this).load(imgLink).get();
+                } else {
+                    userPhoto = BitmapFactory.decodeResource(getResources(), R.drawable.dipper);
+                }
+            } catch (JSONException | IOException e){
+                e.printStackTrace();
+                name = "Имя";
+                surname = "Фамилия";
+                userPhoto = BitmapFactory.decodeResource(getResources(), R.drawable.dipper);
+            }
+            setupUserInfo(name, surname, userId, userPhoto);
+            GameOptionActivity.this.userId = userId;
+            isUploading = false;
+        }
+
+        @Override
+        public void onError(VKError error) {
+            authBtn.setVisibility(View.VISIBLE);
+            loader.setVisibility(View.INVISIBLE);
+            Toast.makeText(GameOptionActivity.this, "Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.", Toast.LENGTH_SHORT).show();
+            isUploading = false;
+        }
+
+        @Override
+        public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+            authBtn.setVisibility(View.VISIBLE);
+            loader.setVisibility(View.INVISIBLE);
+            Toast.makeText(GameOptionActivity.this, "Произошла ошибка соединения с серверами vk. Проверьте подключение к интернету.", Toast.LENGTH_SHORT).show();
+            isUploading = false;
         }
     }
 
@@ -251,7 +320,7 @@ public class GameOptionActivity extends AppCompatActivity {
                 name = "Имя";
                 surname = "Фамилия";
             }
-            setupUserInfo(name, surname, userId);
+            setupUserInfo(name, surname, userId, null);
             GameOptionActivity.this.userId = userId;
         }
 

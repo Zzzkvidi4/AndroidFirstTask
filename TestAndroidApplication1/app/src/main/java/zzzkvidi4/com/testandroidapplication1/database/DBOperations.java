@@ -3,6 +3,8 @@ package zzzkvidi4.com.testandroidapplication1.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -40,6 +42,20 @@ public class DBOperations {
             cursor.close();
             return name + " " + surname;
         }
+    }
+
+    public Bitmap getUserIcon(int user_id){
+        String[] columns = new String[] {"icon"};
+        String selection = "id_user = ?";
+        String[] selectionValues = new String[] {Integer.toString(user_id)};
+        Cursor cursor = db.query("user", columns, selection, selectionValues, null, null, null);
+        int colIndexIcon = cursor.getColumnIndex("icon");
+        if (!cursor.moveToFirst()){
+            cursor.close();
+            return null;
+        }
+        byte[] iconBytes = cursor.getBlob(colIndexIcon);
+        return BitmapFactory.decodeByteArray(iconBytes, 0, iconBytes.length);
     }
 
     public void addGameScore(int id_game, int score, int difficulty, int id_user){
