@@ -2,6 +2,7 @@ package zzzkvidi4.com.testandroidapplication1;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
         DBOperations op = new DBOperations(new DBHelper(this));
         String userName = op.getUserFIOString(id);
+        Bitmap userIcon = op.getUserIcon(id);
         infoTextView.setText(userName);
     }
 

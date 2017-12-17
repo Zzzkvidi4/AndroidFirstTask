@@ -28,6 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "id_server_user integer, "
                 + "games_revision_date date, "
                 + "name text not null, "
+                + "icon blob, "
                 + "surname text not null);");
         db.execSQL("create table game_match ("
                 + " id_game_match integer primary key autoincrement,"
