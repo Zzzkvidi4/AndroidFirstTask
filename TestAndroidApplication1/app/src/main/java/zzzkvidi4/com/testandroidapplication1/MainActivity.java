@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView selectGameListView;
     private GameActivityFactory gameActivityFactory;
     private Button logoutBtn;
+    private ImageView infoIV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         logoutBtn.setOnClickListener(new LogOutOnClickListener());
         Typeface fontAwesomeFont = Typeface.createFromAsset(getAssets(), "font/fontawesome-webfont.ttf");
         logoutBtn.setTypeface(fontAwesomeFont);
+        infoIV = (ImageView)findViewById(R.id.infoImageView);
+        infoIV.setImageResource(R.drawable.anon);
         uploadUserInfo();
     }
 
@@ -78,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
         String userName = op.getUserFIOString(id);
         Bitmap userIcon = op.getUserIcon(id);
         infoTextView.setText(userName);
+        if (userIcon != null)
+            infoIV.setImageBitmap(userIcon);
+        else
+            infoIV.setImageResource(R.drawable.anon);
     }
 
     private class SelectGameItemClickListener implements AdapterView.OnItemClickListener{
